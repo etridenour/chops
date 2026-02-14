@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.next/
+.expo/
+out/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Turbo
+.turbo/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Prisma
+apps/api/src/prisma/migrations/
+
+# Mobile
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+ios/
+android/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/

@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Chops",
+    "slug": "chops",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "chops",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chops.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.chops.app"
+    }
+  }
+}
