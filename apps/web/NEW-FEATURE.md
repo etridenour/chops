@@ -19,14 +19,15 @@ If new types are needed, add them to the shared package first (see `packages/sha
 Create a new route in the App Router at `src/app/routines/page.tsx`:
 
 ```typescript
+import { YStack, H1 } from "@chops/ui";
 import { RoutineList } from "@/components/routines/routine-list";
 
 export default function RoutinesPage() {
   return (
-    <main>
-      <h1>My Routines</h1>
+    <YStack flex={1} padding="$6" maxWidth={800} marginHorizontal="auto">
+      <H1 marginBottom="$6">My Routines</H1>
       <RoutineList />
-    </main>
+    </YStack>
   );
 }
 ```
@@ -48,25 +49,48 @@ src/components/routines/
 // src/components/routines/routine-list.tsx
 "use client";
 
+import { YStack, Spinner } from "@chops/ui";
 import { useRoutines } from "@/hooks/use-routines";
 import { RoutineCard } from "./routine-card";
 
 export function RoutineList() {
   const { routines, isLoading } = useRoutines();
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Spinner />;
 
   return (
-    <div>
+    <YStack gap="$3">
       {routines.map((routine) => (
         <RoutineCard key={routine.id} routine={routine} />
       ))}
-    </div>
+    </YStack>
   );
 }
 ```
 
-### 4. Create Hooks
+### 4. Styling
+
+All UI components come from `@chops/ui`. **Never hardcode colors, spacing, or font sizes.** Use theme tokens instead.
+
+```typescript
+// Good — uses tokens and shared components
+import { YStack, Body, Button } from "@chops/ui";
+
+<YStack padding="$4" borderRadius="$2" borderWidth={1} borderColor="$borderColor">
+  <Body color="$colorMuted">Description</Body>
+  <Button variant="secondary" size="sm">Edit</Button>
+</YStack>
+
+// Bad — hardcoded values
+<div style={{ padding: 16, borderRadius: 8, border: "1px solid #ccc" }}>
+  <p style={{ color: "#666" }}>Description</p>
+  <button style={{ backgroundColor: "#eee" }}>Edit</button>
+</div>
+```
+
+For full theming docs, see `docs/THEMING.md`.
+
+### 5. Create Hooks
 
 Create a custom hook for data fetching at `src/hooks/use-routines.ts`:
 
@@ -93,7 +117,7 @@ export function useRoutines() {
 }
 ```
 
-### 5. Add API Helper (optional)
+### 6. Add API Helper (optional)
 
 If the feature has multiple API calls, create a helper at `src/lib/api/routines.ts`:
 
@@ -131,6 +155,8 @@ export async function createRoutine(data: Partial<Routine>): Promise<Routine> {
 - **Server vs Client Components**: Pages are server components by default (good for SEO). Add `"use client"` only to components that need interactivity (event handlers, hooks, browser APIs).
 - **Shared types**: Always import from `@chops/shared` — never redefine types locally.
 - **Component folders**: Group components by feature, not by type.
+- **Styling**: Use `@chops/ui` components and theme tokens (`$space.4`, `$colorMuted`). Never hardcode colors or spacing. See `docs/THEMING.md`.
+- **Forms**: Wrap form content with native `<form>` elements for semantic HTML.
 
 ## Checklist
 
@@ -139,4 +165,5 @@ export async function createRoutine(data: Partial<Routine>): Promise<Routine> {
 - [ ] Components created under `src/components/feature-name/`
 - [ ] Custom hook created if the feature fetches data
 - [ ] Imports use `@chops/shared` for types
+- [ ] Uses `@chops/ui` components and theme tokens (no hardcoded colors/spacing)
 - [ ] Page is accessible via the expected URL

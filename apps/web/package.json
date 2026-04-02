@@ -10,9 +10,14 @@
   },
   "dependencies": {
     "@chops/shared": "workspace:*",
+    "@chops/ui": "workspace:*",
+    "@tamagui/core": "^2.0.0-rc.14",
+    "@tamagui/next-theme": "^2.0.0-rc.14",
     "next": "^15",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "react-native-web": "~0.19.13",
+    "tamagui": "^2.0.0-rc.14"
   },
   "devDependencies": {
     "@types/node": "^22",

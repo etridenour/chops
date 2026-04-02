@@ -19,32 +19,26 @@ If new types are needed, add them to the shared package first (see `packages/sha
 Expo Router uses file-based routing (like Next.js). Create `app/routines/index.tsx`:
 
 ```typescript
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { FlatList } from "react-native";
+import { YStack, Spinner } from "@chops/ui";
 import { useRoutines } from "@/hooks/use-routines";
 import { RoutineCard } from "@/components/routines/routine-card";
 
 export default function RoutinesScreen() {
   const { routines, isLoading } = useRoutines();
 
-  if (isLoading) return <Text>Loading...</Text>;
+  if (isLoading) return <Spinner />;
 
   return (
-    <View style={styles.container}>
+    <YStack flex={1} padding="$4">
       <FlatList
         data={routines}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <RoutineCard routine={item} />}
       />
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-});
 ```
 
 For detail screens, create `app/routines/[id].tsx`.
@@ -69,7 +63,7 @@ src/components/routines/
 
 ```typescript
 // src/components/routines/routine-card.tsx
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { YStack, Body } from "@chops/ui";
 import type { Routine } from "@chops/shared";
 
 interface RoutineCardProps {
@@ -78,40 +72,47 @@ interface RoutineCardProps {
 
 export function RoutineCard({ routine }: RoutineCardProps) {
   return (
-    <Pressable style={styles.card}>
-      <Text style={styles.name}>{routine.name}</Text>
+    <YStack
+      padding="$4"
+      backgroundColor="$background"
+      borderRadius="$2"
+      marginBottom="$3"
+      borderWidth={1}
+      borderColor="$borderColor"
+    >
+      <Body fontWeight="600" fontSize="$4">{routine.name}</Body>
       {routine.description && (
-        <Text style={styles.description}>{routine.description}</Text>
+        <Body color="$colorMuted" fontSize="$2" marginTop="$1">
+          {routine.description}
+        </Body>
       )}
-    </Pressable>
+    </YStack>
   );
 }
+```
 
+### 5. Styling
+
+All UI components come from `@chops/ui`. **Never hardcode colors, spacing, or font sizes.** Use theme tokens instead.
+
+```typescript
+// Good — uses tokens and shared components
+import { YStack, Body, Button } from "@chops/ui";
+
+<YStack padding="$4" borderRadius="$2" borderWidth={1} borderColor="$borderColor">
+  <Body color="$colorMuted">Description</Body>
+  <Button variant="secondary" size="sm">Edit</Button>
+</YStack>
+
+// Bad — hardcoded values with StyleSheet
 const styles = StyleSheet.create({
-  card: {
-    padding: 16,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  description: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 4,
-  },
+  card: { padding: 16, borderRadius: 8, borderColor: "#ccc" },
 });
 ```
 
-### 5. Create Hooks
+For full theming docs, see `docs/THEMING.md`.
+
+### 6. Create Hooks
 
 Create a custom hook at `src/hooks/use-routines.ts`:
 
@@ -151,7 +152,7 @@ export function useRoutines() {
 
 - **Expo Router**: File-based routing in the `app/` folder, similar to Next.js App Router.
 - **Shared types**: Always import from `@chops/shared` — never redefine types locally.
-- **StyleSheet**: Use `StyleSheet.create()` for all styles, defined at the bottom of the file.
+- **Styling**: Use `@chops/ui` components and theme tokens. Never use `StyleSheet.create()` or hardcode colors. See `docs/THEMING.md`.
 - **Component folders**: Group components by feature, not by type.
 - **Lists**: Use `FlatList` for scrollable lists (not `ScrollView` with `.map()`).
 
@@ -163,5 +164,5 @@ export function useRoutines() {
 - [ ] Components created under `src/components/feature-name/`
 - [ ] Custom hook created if the feature fetches data
 - [ ] Imports use `@chops/shared` for types
-- [ ] Styles use `StyleSheet.create()`
+- [ ] Uses `@chops/ui` components and theme tokens (no hardcoded colors/spacing)
 - [ ] Tested on both iOS and Android (or at least one)

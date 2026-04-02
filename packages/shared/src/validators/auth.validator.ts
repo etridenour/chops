@@ -1,3 +1,10 @@
+import {
+  startSignupSchema,
+  completeSignupSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "../schemas/auth.schema";
 import type {
   StartSignupRequest,
   CompleteSignupRequest,
@@ -6,82 +13,27 @@ import type {
   ResetPasswordRequest,
 } from "../types/auth";
 
+function extractErrors(result: { success: boolean; error?: any }): string[] {
+  if (result.success) return [];
+  return result.error.issues.map((issue: any) => issue.message);
+}
+
 export function validateStartSignup(input: StartSignupRequest): string[] {
-  const errors: string[] = [];
-
-  if (!input.email || input.email.trim().length === 0) {
-    errors.push("Email is required");
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) {
-    errors.push("Email is not valid");
-  }
-
-  return errors;
+  return extractErrors(startSignupSchema.safeParse(input));
 }
 
 export function validateCompleteSignup(input: CompleteSignupRequest): string[] {
-  const errors: string[] = [];
-
-  if (!input.token) {
-    errors.push("Verification token is required");
-  }
-
-  if (!input.displayName || input.displayName.trim().length === 0) {
-    errors.push("Display name is required");
-  } else if (input.displayName.length > 50) {
-    errors.push("Display name must be 50 characters or less");
-  }
-
-  if (!input.password || input.password.length < 8) {
-    errors.push("Password must be at least 8 characters");
-  }
-
-  if (input.password !== input.confirmPassword) {
-    errors.push("Passwords do not match");
-  }
-
-  return errors;
+  return extractErrors(completeSignupSchema.safeParse(input));
 }
 
 export function validateLogin(input: LoginRequest): string[] {
-  const errors: string[] = [];
-
-  if (!input.email || input.email.trim().length === 0) {
-    errors.push("Email is required");
-  }
-
-  if (!input.password || input.password.length === 0) {
-    errors.push("Password is required");
-  }
-
-  return errors;
+  return extractErrors(loginSchema.safeParse(input));
 }
 
 export function validateForgotPassword(input: ForgotPasswordRequest): string[] {
-  const errors: string[] = [];
-
-  if (!input.email || input.email.trim().length === 0) {
-    errors.push("Email is required");
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) {
-    errors.push("Email is not valid");
-  }
-
-  return errors;
+  return extractErrors(forgotPasswordSchema.safeParse(input));
 }
 
 export function validateResetPassword(input: ResetPasswordRequest): string[] {
-  const errors: string[] = [];
-
-  if (!input.token) {
-    errors.push("Reset token is required");
-  }
-
-  if (!input.password || input.password.length < 8) {
-    errors.push("Password must be at least 8 characters");
-  }
-
-  if (input.password !== input.confirmPassword) {
-    errors.push("Passwords do not match");
-  }
-
-  return errors;
+  return extractErrors(resetPasswordSchema.safeParse(input));
 }

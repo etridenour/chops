@@ -1,18 +1,16 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
-import { Link } from "expo-router";
+import { KeyboardAvoidingView, Platform } from "react-native";
+import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import { YStack, H2, Input, Button, ErrorText, LinkText, Spinner } from "@chops/ui";
 import { useAuth } from "@/hooks/use-auth";
 import { validateLogin } from "@chops/shared";
 
+const WEB_URL = process.env.EXPO_PUBLIC_WEB_URL || "http://localhost:3000";
+
 export default function LoginScreen() {
   const { login } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -38,71 +36,56 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <YStack flex={1} justifyContent="center" padding="$6">
+        <H2 textAlign="center" marginBottom="$6">
+          Log In
+        </H2>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+        <Input
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          marginBottom="$3"
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <Input
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          marginBottom="$2"
+        />
 
-      {error && <Text style={styles.error}>{error}</Text>}
+        <LinkText
+          alignSelf="flex-end"
+          marginBottom="$3"
+          onPress={() => WebBrowser.openBrowserAsync(`${WEB_URL}/forgot-password`)}
+        >
+          Forgot password?
+        </LinkText>
 
-      <Pressable
-        style={styles.button}
-        onPress={handleSubmit}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Log In</Text>
-        )}
-      </Pressable>
+        {error && <ErrorText>{error}</ErrorText>}
 
-      <Link href="/signup" style={styles.link}>
-        Don&apos;t have an account? Sign Up
-      </Link>
-    </View>
+        <Button
+          variant="primary"
+          fullWidth
+          onPress={handleSubmit}
+          disabled={isSubmitting}
+          marginBottom="$4"
+        >
+          {isSubmitting ? <Spinner color="$colorInverse" /> : "Log In"}
+        </Button>
+
+        <LinkText onPress={() => router.push("/signup")}>
+          Don&apos;t have an account? Sign Up
+        </LinkText>
+      </YStack>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 24 },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 16,
-  },
-  error: { color: "red", marginBottom: 12 },
-  button: {
-    backgroundColor: "#333",
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
-  link: { textAlign: "center", color: "#666", fontSize: 14 },
-});

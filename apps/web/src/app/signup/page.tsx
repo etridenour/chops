@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { YStack, H1, Input, Button, Label, ErrorText, Body, LinkText } from "@chops/ui";
 import { validateStartSignup } from "@chops/shared";
 
 export default function SignupPage() {
@@ -45,42 +46,65 @@ export default function SignupPage() {
 
   if (sent) {
     return (
-      <main>
-        <h1>Check your email</h1>
-        <p>
-          We sent a verification link to <strong>{email}</strong>. Click the
-          link to create your account.
-        </p>
-        <p>The link expires in 1 hour.</p>
-        <p>
-          <Link href="/login">Back to Log In</Link>
-        </p>
-      </main>
+      <YStack
+        flex={1}
+        justifyContent="center"
+        padding="$6"
+        maxWidth={400}
+        marginHorizontal="auto"
+      >
+        <H1 textAlign="center" marginBottom="$3">
+          Check your email
+        </H1>
+        <Body textAlign="center" marginBottom="$3">
+          We sent a verification link to <Body fontWeight="700">{email}</Body>.
+          Click the link to create your account.
+        </Body>
+        <Body color="$colorSubtle" textAlign="center" fontSize="$2" marginBottom="$6">
+          The link expires in 1 hour.
+        </Body>
+        <Link href="/login">
+          <LinkText>Back to Log In</LinkText>
+        </Link>
+      </YStack>
     );
   }
 
   return (
-    <main>
-      <h1>Sign Up</h1>
+    <YStack
+      flex={1}
+      justifyContent="center"
+      padding="$6"
+      maxWidth={400}
+      marginHorizontal="auto"
+    >
+      <H1 textAlign="center" marginBottom="$6">
+        Sign Up
+      </H1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Sending..." : "Send Verification Email"}
-        </button>
+        <YStack gap="$3">
+          <YStack>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              inputMode="email"
+              value={email}
+              onChangeText={(text: string) => setEmail(text)}
+              autoCapitalize="none"
+            />
+          </YStack>
+          {error && <ErrorText role="alert">{error}</ErrorText>}
+          <Button variant="primary" fullWidth disabled={isSubmitting}>
+            {isSubmitting ? "Sending..." : "Send Verification Email"}
+          </Button>
+        </YStack>
       </form>
-      <p>
-        Already have an account? <Link href="/login">Log In</Link>
-      </p>
-    </main>
+      <Body textAlign="center" marginTop="$4">
+        Already have an account?{" "}
+        <Link href="/login">
+          <LinkText>Log In</LinkText>
+        </Link>
+      </Body>
+    </YStack>
   );
 }

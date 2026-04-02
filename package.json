@@ -2,15 +2,23 @@
   "name": "chops-app",
   "private": true,
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "pnpm dev:kill && turbo dev --filter=@chops/web --filter=@chops/api --filter=@chops/shared & cd apps/mobile && pnpm dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "dev:web": "turbo dev --filter=@chops/web",
     "dev:api": "turbo dev --filter=@chops/api",
-    "dev:mobile": "turbo dev --filter=@chops/mobile"
+    "dev:mobile": "turbo dev --filter=@chops/mobile",
+    "dev:kill": "lsof -ti :3000 | xargs kill -9 2>/dev/null; lsof -ti :4000 | xargs kill -9 2>/dev/null; echo 'Ports 3000 and 4000 cleared'"
   },
   "devDependencies": {
     "turbo": "^2"
   },
-  "packageManager": "pnpm@9.15.4"
+  "packageManager": "pnpm@9.15.4",
+  "pnpm": {
+    "overrides": {
+      "react": "19.2.4",
+      "react-dom": "19.2.4",
+      "@types/react": "^19.1.0"
+    }
+  }
 }

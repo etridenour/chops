@@ -1,11 +1,26 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, Suspense, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { YStack, H1, Input, Button, Label, ErrorText, Body, LinkText, Spinner } from "@chops/ui";
 import { validateResetPassword } from "@chops/shared";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <YStack flex={1} justifyContent="center" alignItems="center">
+          <Spinner />
+        </YStack>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
@@ -17,10 +32,20 @@ export default function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <main>
-        <h1>Invalid Link</h1>
-        <p>This password reset link is invalid or missing a token.</p>
-      </main>
+      <YStack
+        flex={1}
+        justifyContent="center"
+        padding="$6"
+        maxWidth={400}
+        marginHorizontal="auto"
+      >
+        <H1 textAlign="center" marginBottom="$3">
+          Invalid Link
+        </H1>
+        <Body textAlign="center">
+          This password reset link is invalid or missing a token.
+        </Body>
+      </YStack>
     );
   }
 
@@ -59,46 +84,66 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <main>
-        <h1>Password Reset</h1>
-        <p>Your password has been reset successfully.</p>
-        <p>
-          <Link href="/login">Log in with your new password</Link>
-        </p>
-      </main>
+      <YStack
+        flex={1}
+        justifyContent="center"
+        padding="$6"
+        maxWidth={400}
+        marginHorizontal="auto"
+      >
+        <H1 textAlign="center" marginBottom="$3">
+          Password Reset
+        </H1>
+        <Body textAlign="center" marginBottom="$4">
+          Your password has been reset successfully.
+        </Body>
+        <Link href="/login">
+          <LinkText>Log in with your new password</LinkText>
+        </Link>
+      </YStack>
     );
   }
 
   return (
-    <main>
-      <h1>Reset Your Password</h1>
-      <p>Enter your new password below.</p>
+    <YStack
+      flex={1}
+      justifyContent="center"
+      padding="$6"
+      maxWidth={400}
+      marginHorizontal="auto"
+    >
+      <H1 textAlign="center" marginBottom="$3">
+        Reset Your Password
+      </H1>
+      <Body textAlign="center" marginBottom="$6">
+        Enter your new password below.
+      </Body>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="password">New Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">Confirm New Password</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Resetting..." : "Reset Password"}
-        </button>
+        <YStack gap="$3">
+          <YStack>
+            <Label htmlFor="password">New Password</Label>
+            <Input
+              id="password"
+              secureTextEntry
+              value={password}
+              onChangeText={(text: string) => setPassword(text)}
+            />
+          </YStack>
+          <YStack>
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Input
+              id="confirmPassword"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={(text: string) => setConfirmPassword(text)}
+            />
+          </YStack>
+          {error && <ErrorText role="alert">{error}</ErrorText>}
+          <Button variant="primary" fullWidth disabled={isSubmitting}>
+            {isSubmitting ? "Resetting..." : "Reset Password"}
+          </Button>
+        </YStack>
       </form>
-    </main>
+    </YStack>
   );
 }

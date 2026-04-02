@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { YStack, H1, Input, Button, Label, ErrorText, Body, LinkText } from "@chops/ui";
 import { useAuth } from "@/hooks/use-auth";
 import { validateLogin } from "@chops/shared";
 
@@ -33,40 +34,54 @@ export default function LoginPage() {
   };
 
   return (
-    <main>
-      <h1>Log In</h1>
+    <YStack
+      flex={1}
+      justifyContent="center"
+      padding="$6"
+      maxWidth={400}
+      marginHorizontal="auto"
+    >
+      <H1 textAlign="center" marginBottom="$6">
+        Log In
+      </H1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in..." : "Log In"}
-        </button>
+        <YStack gap="$3">
+          <YStack>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              inputMode="email"
+              value={email}
+              onChangeText={(text: string) => setEmail(text)}
+              autoCapitalize="none"
+            />
+          </YStack>
+          <YStack>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              secureTextEntry
+              value={password}
+              onChangeText={(text: string) => setPassword(text)}
+            />
+          </YStack>
+          {error && <ErrorText role="alert">{error}</ErrorText>}
+          <Button variant="primary" fullWidth disabled={isSubmitting}>
+            {isSubmitting ? "Logging in..." : "Log In"}
+          </Button>
+        </YStack>
       </form>
-      <p>
-        <Link href="/forgot-password">Forgot password?</Link>
-      </p>
-      <p>
-        Don&apos;t have an account? <Link href="/signup">Sign Up</Link>
-      </p>
-    </main>
+      <Body textAlign="center" marginTop="$4">
+        <Link href="/forgot-password">
+          <LinkText>Forgot password?</LinkText>
+        </Link>
+      </Body>
+      <Body textAlign="center" marginTop="$2">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup">
+          <LinkText>Sign Up</LinkText>
+        </Link>
+      </Body>
+    </YStack>
   );
 }

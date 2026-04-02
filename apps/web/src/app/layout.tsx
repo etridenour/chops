@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { NextTamaguiProvider } from "@/components/NextTamaguiProvider";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Chops",
@@ -12,9 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <NextTamaguiProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </NextTamaguiProvider>
       </body>
     </html>
   );

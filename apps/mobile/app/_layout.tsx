@@ -1,5 +1,8 @@
 import { useEffect } from "react";
+import { useColorScheme } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
+import { TamaguiProvider } from "tamagui";
+import { tamaguiConfig, SkinProvider } from "@chops/ui";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -36,9 +39,18 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
   return (
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+    <TamaguiProvider
+      config={tamaguiConfig}
+      defaultTheme={colorScheme === "dark" ? "dark" : "light"}
+    >
+      <SkinProvider>
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      </SkinProvider>
+    </TamaguiProvider>
   );
 }
