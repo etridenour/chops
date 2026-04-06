@@ -24,10 +24,11 @@ Cross-platform component library shared by web and mobile. Single source of trut
 
 ## Existing Components
 
-- **Button** — variants: primary, secondary, ghost. Sizes: sm, md, lg. Props: fullWidth, disabled.
+- **Button** — variants: primary, secondary, ghost. Sizes: sm, md, lg. Props: fullWidth, disabled, loading (shows LoadingDrum).
 - **Input** — props: error (red border), placeholder, secureTextEntry, autoCapitalize
 - **Text** — H1, H2, Body, Label, ErrorText, LinkText
 - **Layout** — YStack, XStack, View, Separator, Spinner (re-exported from Tamagui)
+- **LoadingDrum** — animated drum icon for loading states. Props: size, color, style.
 - **Skin** — SkinProvider, useSkin, SkinSelector
 
 ## After Changes

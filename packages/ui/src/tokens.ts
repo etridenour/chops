@@ -15,9 +15,9 @@ export const tokens = createTokens({
     gray800: '#222222',
     gray900: '#111111',
 
-    brand: '#333333',
-    brandLight: '#555555',
-    brandDark: '#111111',
+    brand: '#FF6B00',
+    brandLight: '#FF8A33',
+    brandDark: '#CC5500',
 
     error: '#dc3545',
     errorLight: '#f8d7da',

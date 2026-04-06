@@ -1,9 +1,18 @@
 import { createTamagui } from 'tamagui'
+import { createAnimations } from '@tamagui/animations-css'
 import { tokens } from './tokens'
 import { themes } from './themes'
 import { bodyFont, headingFont } from './fonts'
 
+const animations = createAnimations({
+  fast: 'ease-in-out 150ms',
+  medium: 'ease-in-out 300ms',
+  slow: 'ease-in-out 500ms',
+  bouncy: 'cubic-bezier(0.34, 1.56, 0.64, 1) 400ms',
+})
+
 const config = createTamagui({
+  animations,
   tokens,
   themes,
   fonts: {

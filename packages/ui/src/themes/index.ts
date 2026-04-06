@@ -1,10 +1,12 @@
 import { createThemeBuilder } from '@tamagui/theme-builder'
-import { lightPalette, darkPalette } from './palettes'
+import { lightPalette, darkPalette, lightAccentPalette, darkAccentPalette } from './palettes'
 import { skinDefinitions, type SkinName } from './skins'
 
 const palettes = {
   light: lightPalette,
   dark: darkPalette,
+  light_accent: lightAccentPalette,
+  dark_accent: darkAccentPalette,
 }
 
 // Template maps palette indices to semantic theme keys.
@@ -59,21 +61,52 @@ const themesBuilder = createThemeBuilder()
 
 const baseThemes = themesBuilder.build()
 
-// Build skin sub-themes from skin definitions
+// Build skin sub-themes by applying the same template to skin palettes
 function buildSkinThemes() {
   const skinThemes: Record<string, Record<string, string>> = {}
+  const keys = Object.keys(template) as (keyof typeof template)[]
 
   for (const [skinName, skin] of Object.entries(skinDefinitions)) {
-    skinThemes[`light_${skinName}`] = skin.light
-    skinThemes[`dark_${skinName}`] = skin.dark
+    for (const [themeName, palette] of [
+      [`light_${skinName}`, skin.lightPalette],
+      [`dark_${skinName}`, skin.darkPalette],
+      [`light_${skinName}_accent`, skin.lightAccentPalette],
+      [`dark_${skinName}_accent`, skin.darkAccentPalette],
+    ] as const) {
+      const theme: Record<string, string> = {}
+      for (const key of keys) {
+        theme[key] = palette[template[key]]
+      }
+      skinThemes[themeName] = theme
+    }
   }
 
   return skinThemes
 }
 
+// Build accent sub-themes from accent palettes using the same template
+function buildAccentThemes() {
+  const accentThemes: Record<string, Record<string, string>> = {}
+  const keys = Object.keys(template) as (keyof typeof template)[]
+
+  for (const [themeName, palette] of [
+    ['light_accent', lightAccentPalette],
+    ['dark_accent', darkAccentPalette],
+  ] as const) {
+    const theme: Record<string, string> = {}
+    for (const key of keys) {
+      theme[key] = palette[template[key]]
+    }
+    accentThemes[themeName] = theme
+  }
+
+  return accentThemes
+}
+
 export const themes = {
   ...baseThemes,
   ...buildSkinThemes(),
+  ...buildAccentThemes(),
 }
 
 export { type SkinName }

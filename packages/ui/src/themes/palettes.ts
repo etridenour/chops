@@ -30,3 +30,35 @@ export const darkPalette = [
   '#eeeeee', // 10
   '#ffffff', // 11 strongest
 ]
+
+// Accent palettes — replace these arrays with output from the Tamagui theme builder.
+// Each array must have exactly 12 colors, lightest to darkest (light) or darkest to lightest (dark).
+export const lightAccentPalette = [
+  '#FFF3E0', // 0  lightest accent bg
+  '#FFE0B2', // 1
+  '#FFCC80', // 2
+  '#FFB74D', // 3
+  '#FFA726', // 4
+  '#FF9800', // 5
+  '#FF8A33', // 6
+  '#FF6B00', // 7  brand
+  '#E65100', // 8
+  '#CC5500', // 9  brand dark
+  '#BF360C', // 10
+  '#8D2400', // 11 strongest
+]
+
+export const darkAccentPalette = [
+  '#1A0A00', // 0  darkest accent bg
+  '#2A1500', // 1
+  '#3D2000', // 2
+  '#4E2A00', // 3
+  '#663600', // 4
+  '#804400', // 5
+  '#995200', // 6
+  '#CC5500', // 7  brand dark
+  '#FF6B00', // 8  brand
+  '#FF8A33', // 9  brand light
+  '#FFB74D', // 10
+  '#FFE0B2', // 11 strongest
+]

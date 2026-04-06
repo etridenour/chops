@@ -1,7 +1,7 @@
 import { createFont } from 'tamagui'
 
 export const bodyFont = createFont({
-  family: 'System',
+  family: 'Inter',
   size: {
     1: 12,
     2: 14,
@@ -34,7 +34,7 @@ export const bodyFont = createFont({
 })
 
 export const headingFont = createFont({
-  family: 'System',
+  family: 'Inter',
   size: {
     1: 18,
     2: 20,

@@ -7,11 +7,21 @@ const nextConfig: NextConfig = {
     "tamagui",
     "@tamagui/core",
     "@tamagui/theme-builder",
+    "@tamagui/lucide-icons",
   ],
   turbopack: {
     resolveAlias: {
       "react-native": "react-native-web",
+      "react-native-svg": "react-native-svg-web",
     },
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      "react-native$": "react-native-web",
+      "react-native-svg": "react-native-svg-web",
+    };
+    return config;
   },
 };
 

@@ -6,7 +6,8 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run"
   },
   "dependencies": {
     "@chops/shared": "workspace:*",
@@ -16,6 +17,7 @@
     "next": "^15",
     "react": "^19",
     "react-dom": "^19",
+    "react-native-svg-web": "^1.0.9",
     "react-native-web": "~0.19.13",
     "tamagui": "^2.0.0-rc.14"
   },

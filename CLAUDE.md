@@ -48,6 +48,7 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 - **JWT access tokens** (15min) + **refresh token rotation** (7 days)
 - Web: refresh token in httpOnly cookie. Mobile: refresh token in SecureStore + response body.
 - **pnpm workspaces** + **Turborepo** for monorepo orchestration
+- **@tamagui/animations-css** driver configured in tamagui.config.ts (named animations: fast, medium, slow, bouncy)
 
 ## Key Gotchas
 

@@ -1,6 +1,7 @@
 import type { ReactNode, JSX } from 'react'
 import { View, Text, type ViewProps } from 'tamagui'
 import { useTheme } from '@tamagui/core'
+import { LoadingDrum } from './LoadingDrum'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -11,6 +12,7 @@ export interface ButtonProps extends Omit<ViewProps, 'children'> {
   size?: ButtonSize
   fullWidth?: boolean
   disabled?: boolean
+  loading?: boolean
   onPress?: () => void
 }
 
@@ -26,11 +28,13 @@ export function Button({
   size = 'md',
   fullWidth,
   disabled,
+  loading,
   onPress,
   ...rest
 }: ButtonProps): JSX.Element {
   const theme = useTheme()
   const s = sizeStyles[size]
+  const isDisabled = disabled || loading
 
   const variantStyles = {
     primary: {
@@ -51,7 +55,8 @@ export function Button({
 
   return (
     <View
-      role="button"
+      tag="button"
+      type="button"
       backgroundColor={v.bg}
       paddingVertical={s.py}
       paddingHorizontal={s.px}
@@ -59,14 +64,17 @@ export function Button({
       alignItems="center"
       justifyContent="center"
       cursor="pointer"
-      opacity={disabled ? 0.5 : 1}
+      opacity={isDisabled ? 0.5 : 1}
       width={fullWidth ? '100%' : undefined}
-      onPress={disabled ? undefined : onPress}
+      onPress={isDisabled ? undefined : onPress}
       pressStyle={{ opacity: 0.8, scale: 0.97 }}
       hoverStyle={{ opacity: 0.9 }}
+      borderWidth={0}
       {...rest}
     >
-      {typeof children === 'string' ? (
+      {loading ? (
+        <LoadingDrum size={s.fontSize} color={v.color} />
+      ) : typeof children === 'string' ? (
         <Text color={v.color} fontSize={s.fontSize} fontWeight="600">
           {children}
         </Text>

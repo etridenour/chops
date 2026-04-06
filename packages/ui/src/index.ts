@@ -12,6 +12,8 @@ export { Input } from './components/Input'
 export type { InputProps } from './components/Input'
 export { H1, H2, Body, Label, ErrorText, LinkText } from './components/Text'
 export { SkinSelector } from './components/SkinSelector'
+export { LoadingDrum } from './components/LoadingDrum'
+export type { LoadingDrumProps } from './components/LoadingDrum'
 
 // Providers
 export { SkinProvider, useSkin } from './providers/SkinProvider'
@@ -27,3 +29,6 @@ export {
   Spinner,
 } from 'tamagui'
 export { useTheme, useMedia } from '@tamagui/core'
+
+// Icons
+export { Eye, EyeOff, Drum } from '@tamagui/lucide-icons'
