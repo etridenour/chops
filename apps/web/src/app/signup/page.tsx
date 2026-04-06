@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { YStack, H1, Input, Button, Label, ErrorText, Body, LinkText } from "@chops/ui";
 import { validateStartSignup } from "@chops/shared";
@@ -11,8 +11,7 @@ export default function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setError(null);
 
     const errors = validateStartSignup({ email });
@@ -57,7 +56,7 @@ export default function SignupPage() {
           Check your email
         </H1>
         <Body textAlign="center" marginBottom="$3">
-          We sent a verification link to <Body fontWeight="700">{email}</Body>.
+          We sent a verification link to <strong>{email}</strong>.
           Click the link to create your account.
         </Body>
         <Body color="$colorSubtle" textAlign="center" fontSize="$2" marginBottom="$6">
@@ -81,24 +80,22 @@ export default function SignupPage() {
       <H1 textAlign="center" marginBottom="$6">
         Sign Up
       </H1>
-      <form onSubmit={handleSubmit}>
-        <YStack gap="$3">
-          <YStack>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              inputMode="email"
-              value={email}
-              onChangeText={(text: string) => setEmail(text)}
-              autoCapitalize="none"
-            />
-          </YStack>
-          {error && <ErrorText role="alert">{error}</ErrorText>}
-          <Button variant="primary" fullWidth disabled={isSubmitting}>
-            {isSubmitting ? "Sending..." : "Send Verification Email"}
-          </Button>
+      <YStack gap="$3">
+        <YStack>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            inputMode="email"
+            value={email}
+            onChange={(e) => setEmail((e.target as HTMLInputElement).value)}
+            autoCapitalize="none"
+          />
         </YStack>
-      </form>
+        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <Button variant="primary" fullWidth loading={isSubmitting} onPress={handleSubmit}>
+          Send Verification Email
+        </Button>
+      </YStack>
       <Body textAlign="center" marginTop="$4">
         Already have an account?{" "}
         <Link href="/login">

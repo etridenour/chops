@@ -11,13 +11,11 @@ export function NextTamaguiProvider({ children }: { children: ReactNode }) {
   return (
     <NextThemeProvider
       skipNextHead
-      enableSystem
       defaultTheme="dark"
       onChangeTheme={(next) => setTheme(next as 'light' | 'dark')}
     >
       <TamaguiProvider
         config={tamaguiConfig}
-        disableRootThemeClass
         defaultTheme={theme || 'dark'}
       >
         <SkinProvider>{children}</SkinProvider>

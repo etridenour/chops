@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { YStack, H1, Input, Button, Label, ErrorText, Body, LinkText } from "@chops/ui";
 import { validateForgotPassword } from "@chops/shared";
@@ -11,8 +11,7 @@ export default function ForgotPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setError(null);
 
     const errors = validateForgotPassword({ email });
@@ -57,7 +56,7 @@ export default function ForgotPasswordPage() {
           Check your email
         </H1>
         <Body textAlign="center" marginBottom="$3">
-          If an account exists for <Body fontWeight="700">{email}</Body>, we
+          If an account exists for <strong>{email}</strong>, we
           sent a password reset link. Click the link to reset your password.
         </Body>
         <Body color="$colorSubtle" textAlign="center" fontSize="$2" marginBottom="$6">
@@ -84,24 +83,22 @@ export default function ForgotPasswordPage() {
       <Body textAlign="center" marginBottom="$6">
         Enter your email and we&apos;ll send you a reset link.
       </Body>
-      <form onSubmit={handleSubmit}>
-        <YStack gap="$3">
-          <YStack>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              inputMode="email"
-              value={email}
-              onChangeText={(text: string) => setEmail(text)}
-              autoCapitalize="none"
-            />
-          </YStack>
-          {error && <ErrorText role="alert">{error}</ErrorText>}
-          <Button variant="primary" fullWidth disabled={isSubmitting}>
-            {isSubmitting ? "Sending..." : "Send Reset Link"}
-          </Button>
+      <YStack gap="$3">
+        <YStack>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            inputMode="email"
+            value={email}
+            onChange={(e) => setEmail((e.target as HTMLInputElement).value)}
+            autoCapitalize="none"
+          />
         </YStack>
-      </form>
+        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <Button variant="primary" fullWidth loading={isSubmitting} onPress={handleSubmit}>
+          Send Reset Link
+        </Button>
+      </YStack>
       <Body textAlign="center" marginTop="$4">
         <Link href="/login">
           <LinkText>Back to Log In</LinkText>

@@ -1,0 +1,8 @@
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--borderColorFocus) 40%, transparent);
+}

@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(data.user);
       router.push("/");
     },
-    [router]
+    [router],
   );
 
   const logout = useCallback(async () => {
