@@ -45,13 +45,7 @@ export default function SignupPage() {
 
   if (sent) {
     return (
-      <YStack
-        flex={1}
-        justifyContent="center"
-        padding="$6"
-        maxWidth={400}
-        marginHorizontal="auto"
-      >
+      <>
         <H1 textAlign="center" marginBottom="$3">
           Check your email
         </H1>
@@ -65,18 +59,12 @@ export default function SignupPage() {
         <Link href="/login">
           <LinkText>Back to Log In</LinkText>
         </Link>
-      </YStack>
+      </>
     );
   }
 
   return (
-    <YStack
-      flex={1}
-      justifyContent="center"
-      padding="$6"
-      maxWidth={400}
-      marginHorizontal="auto"
-    >
+    <>
       <H1 textAlign="center" marginBottom="$6">
         Sign Up
       </H1>
@@ -102,6 +90,6 @@ export default function SignupPage() {
           <LinkText>Log In</LinkText>
         </Link>
       </Body>
-    </YStack>
+    </>
   );
 }

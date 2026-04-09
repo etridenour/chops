@@ -2,11 +2,13 @@
 
 import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { YStack, XStack, H1, Input, Button, Label, ErrorText, Body, LinkText, Spinner, Eye, EyeOff } from "@chops/ui";
-import { validateResetPassword } from "@chops/shared";
+import { YStack, XStack, H1, Input, Button, Label, ErrorText, Body, Spinner, Eye, EyeOff } from "@chops/ui";
+import { useAuth } from "@/hooks/use-auth";
+import { validateCompleteSignup } from "@chops/shared";
+import type { AuthResponse } from "@chops/shared";
+import { setAccessToken } from "@/lib/api-client";
 
-export default function ResetPasswordPage() {
+export default function VerifyPage() {
   return (
     <Suspense
       fallback={
@@ -15,46 +17,46 @@ export default function ResetPasswordPage() {
         </YStack>
       }
     >
-      <ResetPasswordContent />
+      <VerifyContent />
     </Suspense>
   );
 }
 
-function ResetPasswordContent() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const { login } = useAuth();
 
+  const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   if (!token) {
     return (
-      <YStack
-        flex={1}
-        justifyContent="center"
-        padding="$6"
-        maxWidth={400}
-        marginHorizontal="auto"
-      >
+      <>
         <H1 textAlign="center" marginBottom="$3">
           Invalid Link
         </H1>
         <Body textAlign="center">
-          This password reset link is invalid or missing a token.
+          This verification link is invalid or missing a token.
         </Body>
-      </YStack>
+      </>
     );
   }
 
   const handleSubmit = async () => {
     setError(null);
 
-    const errors = validateResetPassword({ token, password, confirmPassword });
+    const errors = validateCompleteSignup({
+      token,
+      displayName,
+      password,
+      confirmPassword,
+    });
     if (errors.length > 0) {
       setError(errors[0]);
       return;
@@ -64,18 +66,21 @@ function ResetPasswordContent() {
     try {
       const API_URL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-      const res = await fetch(`${API_URL}/auth/reset-password`, {
+      const res = await fetch(`${API_URL}/auth/signup/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password, confirmPassword }),
+        credentials: "include",
+        body: JSON.stringify({ token, displayName, password, confirmPassword }),
       });
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.message || "Reset failed");
+        throw new Error(err.message || "Verification failed");
       }
 
-      setSuccess(true);
+      const data: AuthResponse = await res.json();
+      setAccessToken(data.accessToken);
+      window.location.href = "/";
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -83,45 +88,25 @@ function ResetPasswordContent() {
     }
   };
 
-  if (success) {
-    return (
-      <YStack
-        flex={1}
-        justifyContent="center"
-        padding="$6"
-        maxWidth={400}
-        marginHorizontal="auto"
-      >
-        <H1 textAlign="center" marginBottom="$3">
-          Password Reset
-        </H1>
-        <Body textAlign="center" marginBottom="$4">
-          Your password has been reset successfully.
-        </Body>
-        <Link href="/login">
-          <LinkText>Log in with your new password</LinkText>
-        </Link>
-      </YStack>
-    );
-  }
-
   return (
-    <YStack
-      flex={1}
-      justifyContent="center"
-      padding="$6"
-      maxWidth={400}
-      marginHorizontal="auto"
-    >
+    <>
       <H1 textAlign="center" marginBottom="$3">
-        Reset Your Password
+        Complete Your Account
       </H1>
       <Body textAlign="center" marginBottom="$6">
-        Enter your new password below.
+        Choose a display name and password to finish signing up.
       </Body>
       <YStack gap="$3">
           <YStack>
-            <Label htmlFor="password">New Password</Label>
+            <Label htmlFor="displayName">Display Name</Label>
+            <Input
+              id="displayName"
+              value={displayName}
+              onChange={(e) => setDisplayName((e.target as HTMLInputElement).value)}
+            />
+          </YStack>
+          <YStack>
+            <Label htmlFor="password">Password</Label>
             <XStack alignItems="center">
               <Input
                 id="password"
@@ -154,7 +139,7 @@ function ResetPasswordContent() {
             </XStack>
           </YStack>
           <YStack>
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
             <XStack alignItems="center">
               <Input
                 id="confirmPassword"
@@ -188,9 +173,9 @@ function ResetPasswordContent() {
           </YStack>
           {error && <ErrorText role="alert">{error}</ErrorText>}
           <Button variant="primary" fullWidth loading={isSubmitting} onPress={handleSubmit}>
-            Reset Password
+            Create Account
           </Button>
       </YStack>
-    </YStack>
+    </>
   );
 }

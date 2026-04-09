@@ -2,7 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { YStack, H1, Input, Button, Label, ErrorText, Body, LinkText } from "@chops/ui";
+import {
+  YStack,
+  H1,
+  Input,
+  Button,
+  Label,
+  ErrorText,
+  Body,
+  LinkText,
+} from "@chops/ui";
 import { validateForgotPassword } from "@chops/shared";
 
 export default function ForgotPasswordPage() {
@@ -45,38 +54,31 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <YStack
-        flex={1}
-        justifyContent="center"
-        padding="$6"
-        maxWidth={400}
-        marginHorizontal="auto"
-      >
+      <>
         <H1 textAlign="center" marginBottom="$3">
           Check your email
         </H1>
         <Body textAlign="center" marginBottom="$3">
-          If an account exists for <strong>{email}</strong>, we
-          sent a password reset link. Click the link to reset your password.
+          If an account exists for <strong>{email}</strong>, we sent a password
+          reset link. Click the link to reset your password.
         </Body>
-        <Body color="$colorSubtle" textAlign="center" fontSize="$2" marginBottom="$6">
+        <Body
+          color="$colorSubtle"
+          textAlign="center"
+          fontSize="$2"
+          marginBottom="$6"
+        >
           The link expires in 5 minutes.
         </Body>
         <Link href="/login">
           <LinkText>Back to Log In</LinkText>
         </Link>
-      </YStack>
+      </>
     );
   }
 
   return (
-    <YStack
-      flex={1}
-      justifyContent="center"
-      padding="$6"
-      maxWidth={400}
-      marginHorizontal="auto"
-    >
+    <>
       <H1 textAlign="center" marginBottom="$3">
         Forgot Password
       </H1>
@@ -95,7 +97,12 @@ export default function ForgotPasswordPage() {
           />
         </YStack>
         {error && <ErrorText role="alert">{error}</ErrorText>}
-        <Button variant="primary" fullWidth loading={isSubmitting} onPress={handleSubmit}>
+        <Button
+          variant="primary"
+          fullWidth
+          loading={isSubmitting}
+          onPress={handleSubmit}
+        >
           Send Reset Link
         </Button>
       </YStack>
@@ -104,6 +111,6 @@ export default function ForgotPasswordPage() {
           <LinkText>Back to Log In</LinkText>
         </Link>
       </Body>
-    </YStack>
+    </>
   );
 }

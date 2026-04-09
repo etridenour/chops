@@ -2,7 +2,7 @@
  * Component tests for LoginPage.
  *
  * WHAT THIS FILE DOES:
- * Tests the LoginPage component by rendering it in a fake browser (jsdom),
+ * Tests the LoginPage component by rendering it in a fake browser (happy-dom),
  * simulating user interactions, and checking the results.
  *
  * KEY DIFFERENCE FROM UNIT TESTS:
@@ -45,9 +45,13 @@ vi.mock("@/hooks/use-auth", () => ({
 // Mock next/link so it renders a plain <a> tag instead of
 // trying to use Next.js router (which doesn't exist in tests).
 vi.mock("next/link", () => ({
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>,
 }));
 
 // Mock Tamagui components to simple HTML elements.
@@ -55,7 +59,9 @@ vi.mock("next/link", () => ({
 // in our test environment. Mocking them avoids setup complexity and
 // keeps our tests focused on LoginPage's logic, not Tamagui's rendering.
 vi.mock("@chops/ui", () => ({
-  YStack: ({ children, ...props }: any) => <div {...filterProps(props)}>{children}</div>,
+  YStack: ({ children, ...props }: any) => (
+    <div {...filterProps(props)}>{children}</div>
+  ),
   Input: ({ id, value, onChange, error, ...props }: any) => (
     <input
       id={id}
@@ -67,12 +73,20 @@ vi.mock("@chops/ui", () => ({
   ),
   H1: ({ children }: any) => <h1>{children}</h1>,
   Button: ({ children, onPress, loading, ...props }: any) => (
-    <button onClick={onPress} disabled={loading} aria-busy={loading || undefined}>
+    <button
+      onClick={onPress}
+      disabled={loading}
+      aria-busy={loading || undefined}
+    >
       {children}
     </button>
   ),
-  Label: ({ children, htmlFor }: any) => <label htmlFor={htmlFor}>{children}</label>,
-  ErrorText: ({ children, ...props }: any) => <span role="alert">{children}</span>,
+  Label: ({ children, htmlFor }: any) => (
+    <label htmlFor={htmlFor}>{children}</label>
+  ),
+  ErrorText: ({ children, ...props }: any) => (
+    <span role="alert">{children}</span>
+  ),
   Body: ({ children }: any) => <p>{children}</p>,
   LinkText: ({ children }: any) => <span>{children}</span>,
   Eye: () => <span>eye-icon</span>,
@@ -84,7 +98,26 @@ function filterProps(props: Record<string, any>) {
   const domSafe: Record<string, any> = {};
   for (const [key, val] of Object.entries(props)) {
     // Skip Tamagui-specific props that aren't valid HTML attributes
-    if (key.startsWith("$") || ["inputMode", "autoCapitalize", "paddingRight", "fullWidth", "variant", "gap", "flex", "justifyContent", "marginHorizontal", "marginBottom", "marginTop", "textAlign", "maxWidth", "position"].includes(key)) continue;
+    if (
+      key.startsWith("$") ||
+      [
+        "inputMode",
+        "autoCapitalize",
+        "paddingRight",
+        "fullWidth",
+        "variant",
+        "gap",
+        "flex",
+        "justifyContent",
+        "marginHorizontal",
+        "marginBottom",
+        "marginTop",
+        "textAlign",
+        "maxWidth",
+        "position",
+      ].includes(key)
+    )
+      continue;
     domSafe[key] = val;
   }
   return domSafe;
@@ -92,7 +125,7 @@ function filterProps(props: Record<string, any>) {
 
 // ─── TESTS ─────────────────────────────────────────────
 
-// beforeEach() runs before EVERY test in this describe block.
+// beforeEach() runs before EVERY test in all describe blocks in this file.
 // We reset the mock so that calls from one test don't leak into another.
 // This is critical — tests should be independent of each other.
 beforeEach(() => {
@@ -110,7 +143,7 @@ describe("LoginPage", () => {
     // If it can't find it, the test fails with a helpful error message.
     expect(screen.getByText("Log In", { selector: "h1" })).toBeInTheDocument();
 
-    // getByLabelText() finds an input by its associated <label>.
+    // getByLabelText() finds a DOM element by its associated <label>.
     // This is the PREFERRED way to query form fields — it also
     // verifies your labels are properly connected (good for accessibility).
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
@@ -178,11 +211,60 @@ describe("LoginPage", () => {
     // (the login promise rejecting). Without waitFor, we'd check
     // the DOM before React has re-rendered with the error.
     await waitFor(() => {
-      expect(screen.getByRole("alert")).toHaveTextContent("Invalid credentials");
+      expect(screen.getByRole("alert")).toHaveTextContent(
+        "Invalid credentials",
+      );
     });
   });
 
-  // Test 5: Password visibility toggle
+  // Test 5: Validation error for invalid email — tests the emailInvalid
+  // state (line 36 of page.tsx) which highlights the email input.
+  test("shows validation error and marks email invalid for bad email format", async () => {
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    await user.type(screen.getByLabelText("Email"), "not-an-email");
+    await user.type(screen.getByLabelText("Password"), "somepassword");
+    await user.click(screen.getByText("Log In", { selector: "button" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Email is not valid");
+    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-invalid");
+    expect(mockLogin).not.toHaveBeenCalled();
+  });
+
+  // Test 6: Generic API error — when the error has no specific message,
+  // the component still displays whatever err.message contains.
+  test("displays generic error message on unexpected API failure", async () => {
+    mockLogin.mockRejectedValue(new Error("Login failed"));
+
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    await user.type(screen.getByLabelText("Email"), "test@example.com");
+    await user.type(screen.getByLabelText("Password"), "mypassword123");
+    await user.click(screen.getByText("Log In", { selector: "button" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toHaveTextContent("Login failed");
+    });
+  });
+
+  // Test 7: Error clears when user starts typing — tests the onChange
+  // handlers at lines 70-71 of page.tsx.
+  test("clears error when user starts typing", async () => {
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    // Trigger a validation error
+    await user.click(screen.getByText("Log In", { selector: "button" }));
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+
+    // Type in the email field — error should disappear
+    await user.type(screen.getByLabelText("Email"), "a");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  // Test 8: Password visibility toggle
   test("toggles password visibility", async () => {
     const user = userEvent.setup();
     render(<LoginPage />);

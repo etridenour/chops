@@ -11,7 +11,8 @@ Next.js 15 (App Router), React 19, Tamagui, react-native-web
 
 ## File Structure
 
-- `src/app/` — pages (Next.js App Router)
+- `src/app/` — pages (Next.js App Router), organized by route groups
+- `src/app/(auth)/` — auth route group (login, signup, verify, forgot-password, reset-password) with shared layout
 - `src/components/feature-name/` — feature-specific components
 - `src/components/auth/` — auth-provider, protected-route
 - `src/hooks/` — custom hooks (e.g., `use-auth.ts`)
