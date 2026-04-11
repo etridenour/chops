@@ -115,6 +115,7 @@ function filterProps(props: Record<string, any>) {
         "textAlign",
         "maxWidth",
         "position",
+        "alignItems",
       ].includes(key)
     )
       continue;

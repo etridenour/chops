@@ -19,7 +19,10 @@
  */
 
 import { describe, test, expect } from "vitest";
-import { validateLogin } from "../../validators/auth.validator";
+import {
+  validateLogin,
+  validateResetPassword,
+} from "../../validators/auth.validator";
 
 // describe() groups tests for a specific function or feature.
 // You can nest describe() blocks for sub-groups.
@@ -29,7 +32,10 @@ describe("validateLogin", () => {
 
   test("returns empty array for valid email and password", () => {
     // Call the function with valid input
-    const errors = validateLogin({ email: "user@example.com", password: "mypassword123" });
+    const errors = validateLogin({
+      email: "user@example.com",
+      password: "mypassword123",
+    });
 
     // Assert: empty array means no validation errors
     expect(errors).toEqual([]);
@@ -53,7 +59,10 @@ describe("validateLogin", () => {
   });
 
   test("returns error when email is not a valid email format", () => {
-    const errors = validateLogin({ email: "not-an-email", password: "mypassword123" });
+    const errors = validateLogin({
+      email: "not-an-email",
+      password: "mypassword123",
+    });
 
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].toLowerCase()).toContain("email");
@@ -72,5 +81,47 @@ describe("validateLogin", () => {
     // At least one error — we don't care about the exact count,
     // just that validation caught the problem.
     expect(errors.length).toBeGreaterThan(0);
+  });
+});
+
+describe("validate reset password", () => {
+  test("password valid", () => {
+    const errors = validateResetPassword({
+      token: "validtoken",
+      password: "validPassword123",
+      confirmPassword: "validPassword123",
+    });
+
+    expect(errors).toEqual([]);
+  });
+
+  test("password must be min of 8 characters", () => {
+    const errors = validateResetPassword({
+      token: "validtoken",
+      password: "short",
+      confirmPassword: "short",
+    });
+
+    expect(errors[0].toLowerCase()).toContain("password");
+  });
+
+  test("confirm password must match password", () => {
+    const errors = validateResetPassword({
+      token: "validtoken",
+      password: "validpassword",
+      confirmPassword: "differentpassword",
+    });
+
+    expect(errors[0].toLowerCase()).toContain("match");
+  });
+
+  test("missing reset password token", () => {
+    const errors = validateResetPassword({
+      token: "",
+      password: "validpassword",
+      confirmPassword: "validpassword",
+    });
+
+    expect(errors[0].toLowerCase()).toContain("token");
   });
 });
