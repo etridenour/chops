@@ -2,7 +2,19 @@
 
 import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { YStack, XStack, H1, Input, Button, Label, ErrorText, Body, Spinner, Eye, EyeOff } from "@chops/ui";
+import {
+  YStack,
+  XStack,
+  H1,
+  Input,
+  Button,
+  Label,
+  ErrorText,
+  Body,
+  Spinner,
+  Eye,
+  EyeOff,
+} from "@chops/ui";
 import { useAuth } from "@/hooks/use-auth";
 import { validateCompleteSignup } from "@chops/shared";
 import type { AuthResponse } from "@chops/shared";
@@ -97,84 +109,99 @@ function VerifyContent() {
         Choose a display name and password to finish signing up.
       </Body>
       <YStack gap="$3">
-          <YStack>
-            <Label htmlFor="displayName">Display Name</Label>
+        <YStack>
+          <Label htmlFor="displayName">Display Name</Label>
+          <Input
+            id="displayName"
+            value={displayName}
+            onChange={(e) =>
+              setDisplayName((e.target as HTMLInputElement).value)
+            }
+          />
+        </YStack>
+        <YStack>
+          <Label htmlFor="password">Password</Label>
+          <XStack alignItems="center">
             <Input
-              id="displayName"
-              value={displayName}
-              onChange={(e) => setDisplayName((e.target as HTMLInputElement).value)}
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) =>
+                setPassword((e.target as HTMLInputElement).value)
+              }
+              flex={1}
             />
-          </YStack>
-          <YStack>
-            <Label htmlFor="password">Password</Label>
-            <XStack alignItems="center">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword((e.target as HTMLInputElement).value)}
-                flex={1}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  marginLeft: -36,
-                  padding: 4,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {showPassword ? (
-                  <EyeOff size={20} color="$color" />
-                ) : (
-                  <Eye size={20} color="$color" />
-                )}
-              </button>
-            </XStack>
-          </YStack>
-          <YStack>
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <XStack alignItems="center">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword((e.target as HTMLInputElement).value)}
-                flex={1}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword((prev) => !prev)}
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  marginLeft: -36,
-                  padding: 4,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {showConfirmPassword ? (
-                  <EyeOff size={20} color="$color" />
-                ) : (
-                  <Eye size={20} color="$color" />
-                )}
-              </button>
-            </XStack>
-          </YStack>
-          {error && <ErrorText role="alert">{error}</ErrorText>}
-          <Button variant="primary" fullWidth loading={isSubmitting} onPress={handleSubmit}>
-            Create Account
-          </Button>
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                marginLeft: -36,
+                padding: 4,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {showPassword ? (
+                <EyeOff size={20} color="$color" />
+              ) : (
+                <Eye size={20} color="$color" />
+              )}
+            </button>
+          </XStack>
+        </YStack>
+        <YStack>
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <XStack alignItems="center">
+            <Input
+              id="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) =>
+                setConfirmPassword((e.target as HTMLInputElement).value)
+              }
+              flex={1}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              aria-label={
+                showConfirmPassword
+                  ? "Hide confirm password"
+                  : "Show confirm password"
+              }
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                marginLeft: -36,
+                padding: 4,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {showConfirmPassword ? (
+                <EyeOff size={20} color="$color" />
+              ) : (
+                <Eye size={20} color="$color" />
+              )}
+            </button>
+          </XStack>
+        </YStack>
+        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <Button
+          variant="primary"
+          fullWidth
+          loading={isSubmitting}
+          onPress={handleSubmit}
+        >
+          Create Account
+        </Button>
       </YStack>
     </>
   );
