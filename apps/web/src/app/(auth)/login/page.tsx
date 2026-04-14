@@ -48,13 +48,7 @@ export default function LoginPage() {
   };
 
   return (
-    <YStack
-      flex={1}
-      justifyContent="center"
-      padding="$6"
-      maxWidth={400}
-      marginHorizontal="auto"
-    >
+    <>
       <H1 textAlign="center" marginBottom="$6">
         Log In
       </H1>
@@ -133,6 +127,6 @@ export default function LoginPage() {
           <LinkText>Sign Up</LinkText>
         </Link>
       </Body>
-    </YStack>
+    </>
   );
 }
