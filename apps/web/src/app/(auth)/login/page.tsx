@@ -8,12 +8,13 @@ import {
   H1,
   Button,
   Label,
-  ErrorText,
+
   Body,
   LinkText,
   Eye,
   EyeOff,
 } from "@chops/ui";
+import { AuthError } from "../components/AuthError";
 import { useAuth } from "@/hooks/use-auth";
 import { validateLogin } from "@chops/shared";
 
@@ -106,7 +107,7 @@ export default function LoginPage() {
             </button>
           </YStack>
         </YStack>
-        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <AuthError error={error} />
         <Button
           variant="primary"
           fullWidth

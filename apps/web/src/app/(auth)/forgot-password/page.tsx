@@ -8,10 +8,11 @@ import {
   Input,
   Button,
   Label,
-  ErrorText,
+
   Body,
   LinkText,
 } from "@chops/ui";
+import { AuthError } from "../components/AuthError";
 import { validateForgotPassword } from "@chops/shared";
 
 export default function ForgotPasswordPage() {
@@ -96,7 +97,7 @@ export default function ForgotPasswordPage() {
             autoCapitalize="none"
           />
         </YStack>
-        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <AuthError error={error} />
         <Button
           variant="primary"
           fullWidth

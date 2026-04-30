@@ -124,12 +124,8 @@ describe("VerifyPage", () => {
       screen.getByText("Complete Your Account", { selector: "h1" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Choose a display name and password to finish signing up.",
-        { selector: "p" },
-      ),
+      screen.getByText("Set a password.", { selector: "p" }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Display Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
 
@@ -160,7 +156,6 @@ describe("VerifyPage", () => {
     const user = userEvent.setup();
     render(<VerifyPage />);
 
-    await user.type(screen.getByLabelText("Display Name"), "display-name");
     await user.type(screen.getByLabelText("Password"), "valid-password");
     await user.type(
       screen.getByLabelText("Confirm Password"),
@@ -185,7 +180,6 @@ describe("VerifyPage", () => {
     const user = userEvent.setup();
     render(<VerifyPage />);
 
-    await user.type(screen.getByLabelText("Display Name"), "display-name");
     await user.type(screen.getByLabelText("Password"), "valid-password");
     await user.type(
       screen.getByLabelText("Confirm Password"),
@@ -211,7 +205,6 @@ describe("VerifyPage", () => {
     const user = userEvent.setup();
     render(<VerifyPage />);
 
-    await user.type(screen.getByLabelText("Display Name"), "display-name");
     await user.type(screen.getByLabelText("Password"), "valid-password");
     await user.type(
       screen.getByLabelText("Confirm Password"),
@@ -234,7 +227,6 @@ describe("VerifyPage", () => {
     const user = userEvent.setup();
     render(<VerifyPage />);
 
-    await user.type(screen.getByLabelText("Display Name"), "display-name");
     await user.type(screen.getByLabelText("Password"), "valid-password");
     await user.type(
       screen.getByLabelText("Confirm Password"),
@@ -294,7 +286,6 @@ describe("VerifyPage", () => {
     const user = userEvent.setup();
     render(<VerifyPage />);
 
-    await user.type(screen.getByLabelText("Display Name"), "display-name");
     await user.type(screen.getByLabelText("Password"), "valid-password");
     await user.type(
       screen.getByLabelText("Confirm Password"),

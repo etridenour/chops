@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { YStack, H1, Input, Button, Label, ErrorText, Body, LinkText } from "@chops/ui";
+import { YStack, H1, Input, Button, Label, Body, LinkText } from "@chops/ui";
+import { AuthError } from "../components/AuthError";
 import { validateStartSignup } from "@chops/shared";
 
 export default function SignupPage() {
@@ -79,7 +80,7 @@ export default function SignupPage() {
             autoCapitalize="none"
           />
         </YStack>
-        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <AuthError error={error} />
         <Button variant="primary" fullWidth loading={isSubmitting} onPress={handleSubmit}>
           Send Verification Email
         </Button>

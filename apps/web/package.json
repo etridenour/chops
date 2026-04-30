@@ -18,7 +18,7 @@
     "react": "^19",
     "react-dom": "^19",
     "react-native-svg-web": "^1.0.9",
-    "react-native-web": "~0.19.13",
+    "react-native-web": "^0.20.0",
     "tamagui": "^2.0.0-rc.14"
   },
   "devDependencies": {

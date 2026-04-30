@@ -10,13 +10,14 @@ import {
   Input,
   Button,
   Label,
-  ErrorText,
+
   Body,
   LinkText,
   Spinner,
   Eye,
   EyeOff,
 } from "@chops/ui";
+import { AuthError } from "../components/AuthError";
 import { validateResetPassword } from "@chops/shared";
 
 export default function ResetPasswordPage() {
@@ -189,7 +190,7 @@ function ResetPasswordContent() {
             </button>
           </XStack>
         </YStack>
-        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <AuthError error={error} />
         <Button
           variant="primary"
           fullWidth
