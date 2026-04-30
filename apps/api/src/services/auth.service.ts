@@ -3,20 +3,21 @@ import crypto from "crypto";
 import type { AuthUser } from "@chops/shared";
 import { prisma } from "../utils/prisma";
 import { signAccessToken, getRefreshTokenExpiresAt } from "../utils/jwt.util";
-import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.util";
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from "../utils/email.util";
 import { AppError } from "../errors/AppError";
 
 function toAuthUser(user: {
   id: string;
   email: string;
-  displayName: string;
   role: string;
   emailVerified: boolean;
 }): AuthUser {
   return {
     id: user.id,
     email: user.email,
-    displayName: user.displayName,
     role: user.role,
     emailVerified: user.emailVerified,
   };
@@ -25,7 +26,6 @@ function toAuthUser(user: {
 async function issueTokens(user: {
   id: string;
   email: string;
-  displayName: string;
   role: string;
   emailVerified: boolean;
 }): Promise<{ authUser: AuthUser; accessToken: string; refreshToken: string }> {
@@ -46,12 +46,16 @@ async function issueTokens(user: {
 export async function startSignup(email: string): Promise<{ message: string }> {
   const normalizedEmail = email.toLowerCase().trim();
 
-  const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const existing = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
   if (existing) {
     throw new AppError(409, "An account with this email already exists");
   }
 
-  await prisma.verificationToken.deleteMany({ where: { email: normalizedEmail } });
+  await prisma.verificationToken.deleteMany({
+    where: { email: normalizedEmail },
+  });
 
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
@@ -67,7 +71,6 @@ export async function startSignup(email: string): Promise<{ message: string }> {
 
 export async function completeSignup(
   token: string,
-  displayName: string,
   password: string,
 ): Promise<{ authUser: AuthUser; accessToken: string; refreshToken: string }> {
   const verification = await prisma.verificationToken.findUnique({
@@ -94,8 +97,8 @@ export async function completeSignup(
   const user = await prisma.user.create({
     data: {
       email: verification.email,
-      displayName: displayName.trim(),
       emailVerified: true,
+      displayName: null, // Default empty, can be updated later
       accounts: {
         create: {
           provider: "credentials",
@@ -140,7 +143,9 @@ export async function logout(refreshToken: string | undefined): Promise<void> {
 export async function refreshTokens(
   refreshToken: string,
 ): Promise<{ authUser: AuthUser; accessToken: string; refreshToken: string }> {
-  const stored = await prisma.refreshToken.findUnique({ where: { token: refreshToken } });
+  const stored = await prisma.refreshToken.findUnique({
+    where: { token: refreshToken },
+  });
 
   if (!stored || stored.expiresAt < new Date()) {
     if (stored) await prisma.refreshToken.delete({ where: { id: stored.id } });
@@ -167,17 +172,26 @@ export async function getMe(userId: string): Promise<{ user: AuthUser }> {
   return { user: toAuthUser(user) };
 }
 
-export async function forgotPassword(email: string): Promise<{ message: string }> {
+export async function forgotPassword(
+  email: string,
+): Promise<{ message: string }> {
   const normalizedEmail = email.toLowerCase().trim();
 
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
 
   // Always return same message to prevent email enumeration
   if (!user) {
-    return { message: "If an account with that email exists, a reset link has been sent" };
+    return {
+      message:
+        "If an account with that email exists, a reset link has been sent",
+    };
   }
 
-  await prisma.passwordResetToken.deleteMany({ where: { email: normalizedEmail } });
+  await prisma.passwordResetToken.deleteMany({
+    where: { email: normalizedEmail },
+  });
 
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
@@ -188,10 +202,15 @@ export async function forgotPassword(email: string): Promise<{ message: string }
 
   await sendPasswordResetEmail(normalizedEmail, token);
 
-  return { message: "If an account with that email exists, a reset link has been sent" };
+  return {
+    message: "If an account with that email exists, a reset link has been sent",
+  };
 }
 
-export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
+export async function resetPassword(
+  token: string,
+  password: string,
+): Promise<{ message: string }> {
   const resetToken = await prisma.passwordResetToken.findUnique({
     where: { token },
   });

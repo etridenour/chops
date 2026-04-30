@@ -39,7 +39,6 @@ function VerifyContent() {
   const token = searchParams.get("token");
   const { login } = useAuth();
 
-  const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -65,7 +64,6 @@ function VerifyContent() {
 
     const errors = validateCompleteSignup({
       token,
-      displayName,
       password,
       confirmPassword,
     });
@@ -82,7 +80,7 @@ function VerifyContent() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ token, displayName, password, confirmPassword }),
+        body: JSON.stringify({ token, password, confirmPassword }),
       });
 
       if (!res.ok) {
@@ -109,16 +107,6 @@ function VerifyContent() {
         Choose a display name and password to finish signing up.
       </Body>
       <YStack gap="$3">
-        <YStack>
-          <Label htmlFor="displayName">Display Name</Label>
-          <Input
-            id="displayName"
-            value={displayName}
-            onChange={(e) =>
-              setDisplayName((e.target as HTMLInputElement).value)
-            }
-          />
-        </YStack>
         <YStack>
           <Label htmlFor="password">Password</Label>
           <XStack alignItems="center">

@@ -16,15 +16,10 @@ function HomeContent() {
   const { user, logout } = useAuth();
 
   return (
-    <YStack
-      flex={1}
-      justifyContent="center"
-      alignItems="center"
-      padding="$6"
-    >
+    <YStack flex={1} justifyContent="center" alignItems="center" padding="$6">
       <H1>Chops</H1>
       <Body color="$colorMuted" marginTop="$2">
-        Welcome, {user?.displayName}!
+        Welcome!
       </Body>
       <Button variant="secondary" size="sm" marginTop="$6" onPress={logout}>
         Log Out

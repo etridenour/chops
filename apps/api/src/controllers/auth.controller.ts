@@ -29,7 +29,11 @@ function setRefreshTokenCookie(res: Response, token: string): void {
 function buildAuthResponse(
   req: Request,
   res: Response,
-  result: { authUser: AuthResponse["user"]; accessToken: string; refreshToken: string },
+  result: {
+    authUser: AuthResponse["user"];
+    accessToken: string;
+    refreshToken: string;
+  },
   statusCode: number = 200,
 ) {
   const isMobile = req.headers["x-client-type"] === "mobile";
@@ -51,7 +55,11 @@ function buildAuthResponse(
 }
 
 // POST /auth/signup/start
-export const startSignup = async (req: Request, res: Response, next: NextFunction) => {
+export const startSignup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const body = req.body as StartSignupRequest;
     const errors = validateStartSignup(body);
@@ -67,7 +75,11 @@ export const startSignup = async (req: Request, res: Response, next: NextFunctio
 };
 
 // POST /auth/signup/complete
-export const completeSignup = async (req: Request, res: Response, next: NextFunction) => {
+export const completeSignup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const body = req.body as CompleteSignupRequest;
     const errors = validateCompleteSignup(body);
@@ -75,7 +87,7 @@ export const completeSignup = async (req: Request, res: Response, next: NextFunc
       return res.status(400).json({ message: errors[0] });
     }
 
-    const result = await authService.completeSignup(body.token, body.displayName, body.password);
+    const result = await authService.completeSignup(body.token, body.password);
     return buildAuthResponse(req, res, result, 201);
   } catch (err) {
     next(err);
@@ -83,7 +95,11 @@ export const completeSignup = async (req: Request, res: Response, next: NextFunc
 };
 
 // POST /auth/login
-export const login = async (req: Request, res: Response, next: NextFunction) => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const body = req.body as LoginRequest;
     const errors = validateLogin(body);
@@ -99,7 +115,11 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 // POST /auth/logout
-export const logout = async (req: Request, res: Response, next: NextFunction) => {
+export const logout = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const token = req.cookies?.refreshToken || req.body?.refreshToken;
     await authService.logout(token);
@@ -112,7 +132,11 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 // POST /auth/refresh
-export const refresh = async (req: Request, res: Response, next: NextFunction) => {
+export const refresh = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const token = req.cookies?.refreshToken || req.body?.refreshToken;
     if (!token) {
@@ -138,7 +162,11 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // POST /auth/forgot-password
-export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const body = req.body as ForgotPasswordRequest;
     const errors = validateForgotPassword(body);
@@ -154,7 +182,11 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 };
 
 // POST /auth/reset-password
-export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const body = req.body as ResetPasswordRequest;
     const errors = validateResetPassword(body);
