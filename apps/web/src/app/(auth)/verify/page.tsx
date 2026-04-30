@@ -9,12 +9,12 @@ import {
   Input,
   Button,
   Label,
-  ErrorText,
   Body,
   Spinner,
   Eye,
   EyeOff,
 } from "@chops/ui";
+import { AuthError } from "../components/AuthError";
 import { useAuth } from "@/hooks/use-auth";
 import { validateCompleteSignup } from "@chops/shared";
 import type { AuthResponse } from "@chops/shared";
@@ -104,7 +104,7 @@ function VerifyContent() {
         Complete Your Account
       </H1>
       <Body textAlign="center" marginBottom="$6">
-        Choose a display name and password to finish signing up.
+        Set a password.
       </Body>
       <YStack gap="$3">
         <YStack>
@@ -181,7 +181,7 @@ function VerifyContent() {
             </button>
           </XStack>
         </YStack>
-        {error && <ErrorText role="alert">{error}</ErrorText>}
+        <AuthError error={error} />
         <Button
           variant="primary"
           fullWidth
