@@ -7,10 +7,6 @@ export const startSignupSchema = z.object({
 export const completeSignupSchema = z
   .object({
     token: z.string().min(1, "Verification token is required"),
-    displayName: z
-      .string()
-      .min(1, "Display name is required")
-      .max(50, "Display name must be 50 characters or less"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
   })

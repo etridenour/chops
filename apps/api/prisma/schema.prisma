@@ -10,7 +10,7 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
-  displayName   String
+  displayName   String?
   role          String    @default("user")
   emailVerified Boolean   @default(false)
   accounts      Account[]
