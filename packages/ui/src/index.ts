@@ -27,8 +27,9 @@ export {
   View,
   Separator,
   Spinner,
+  Sheet,
 } from 'tamagui'
 export { useTheme, useMedia } from '@tamagui/core'
 
 // Icons
-export { Eye, EyeOff, Drum } from '@tamagui/lucide-icons'
+export { Eye, EyeOff, Drum, Menu, X, Home, LogOut } from '@tamagui/lucide-icons'
