@@ -34,6 +34,7 @@ vi.mock("@chops/ui", () => ({
   ),
   XStack: ({ children }: any) => <div>{children}</div>,
   Home: () => <svg data-testid="nav-icon" />,
+  Body: ({ children }: any) => <span>{children}</span>,
 }));
 
 beforeEach(() => {

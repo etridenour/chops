@@ -1,8 +1,13 @@
+// TS errors in this file are Tamagui RC (v2.0.0-rc.14) type issues:
+// - `tag` prop, `$accentBackground` token, and `@tamagui/helpers-icon` types
+//   are not recognized by TS but work correctly at runtime.
+// These will resolve when Tamagui releases stable v2.
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { XStack } from "@chops/ui";
+import { XStack, Body } from "@chops/ui";
 import type { IconProps } from "@tamagui/helpers-icon";
 import type { ComponentType } from "react";
 
@@ -24,15 +29,15 @@ export function NavLink({ href, label, icon: Icon, onPress }: NavLinkProps) {
         gap="$3"
         padding="$3"
         borderRadius="$2"
-        backgroundColor={isActive ? "$accentBackground" : "transparent"}
-        hoverStyle={{ backgroundColor: isActive ? "$accentBackground" : "$gray3" }}
-        pressStyle={{ backgroundColor: "$gray4" }}
+        backgroundColor={isActive ? "$backgroundMuted" : "transparent"}
+        hoverStyle={{ backgroundColor: isActive ? "$backgroundMuted" : "$backgroundHover" }}
+        pressStyle={{ backgroundColor: "$backgroundPress" }}
         cursor="pointer"
       >
-        <Icon size={20} color={isActive ? "$accentColor" : "$colorMuted"} />
-        <XStack tag="span" color={isActive ? "$accentColor" : "$colorMuted"} fontSize="$3" fontWeight={isActive ? "600" : "400"}>
+        <Icon size={20} color={isActive ? "$color" : "$colorMuted"} />
+        <Body color={isActive ? "$color" : "$colorMuted"} fontSize="$3" fontWeight={isActive ? "600" : "400"}>
           {label}
-        </XStack>
+        </Body>
       </XStack>
     </Link>
   );

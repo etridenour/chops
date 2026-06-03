@@ -35,6 +35,7 @@ vi.mock("@chops/ui", () => ({
       {children}
     </div>
   ),
+  Body: ({ children }: any) => <span>{children}</span>,
 }));
 
 beforeEach(() => {
@@ -86,7 +87,7 @@ describe("NavLink component", () => {
 
     expect(screen.getAllByTestId("nav-link-container")[0]).toHaveAttribute(
       "data-background",
-      "$accentBackground",
+      "$backgroundMuted",
     );
   });
 
