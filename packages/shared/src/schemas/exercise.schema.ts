@@ -14,6 +14,8 @@ export const createExerciseSchema = z.object({
   totalMeasures: z.number().min(1),
   timeSigChangeMeasures: z
     .array(exerciseMeasureSchema)
-    .min(1, "At least on measure is required"),
+    .min(1, "At least one measure is required"),
   fromXml: z.boolean().optional(),
 });
+
+export const updateExerciseSchema = createExerciseSchema.partial();
