@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { healthRouter } from "./routes/health";
 import { authRouter } from "./routes/auth";
 import { errorHandler } from "./middleware/error.middleware";
+import { exerciseRouter } from "./routes/exercise";
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ app.use(
       ...(process.env.MOBILE_URL ? [process.env.MOBILE_URL] : []),
     ],
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 app.use(cookieParser());
@@ -26,6 +27,7 @@ app.use(cookieParser());
 // Routes
 app.use("/health", healthRouter);
 app.use("/auth", authRouter);
+app.use("/exercises", exerciseRouter);
 
 // Error handling (must be after all routes)
 app.use(errorHandler);
