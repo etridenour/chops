@@ -58,12 +58,12 @@ export async function updateExercise(
 export async function deleteExercise(
   userId: string,
   exerciseId: string,
-): Promise<Exercise> {
+): Promise<void> {
   await getExerciseById(userId, exerciseId); // throws 404 if not found
 
   const exercise = await prisma.exercise.delete({
     where: { id: exerciseId, userId },
   });
 
-  return exercise as unknown as Exercise;
+  return;
 }
