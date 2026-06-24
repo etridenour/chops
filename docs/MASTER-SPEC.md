@@ -63,6 +63,7 @@ This app is for building technical proficiency when it comes to playing drums. I
 
 #### v1 — Solo practice (web + mobile)
 - [~] Exercise library (CRUD) — API built (types, schema, validators, Prisma model, service, controller, routes); web frontend next
+- [ ] GraphQL API layer (Apollo Server over services + codegen) — re-expose exercises first, then GraphQL-native from there
 - [ ] Click track builder (CRUD)
 - [ ] Practice session builder (CRUD)
 - [ ] Metronome / live practice screen
@@ -118,6 +119,7 @@ chops-app/
 | Web | Next.js 15 (App Router), React 19, Tamagui, react-native-web |
 | Mobile | Expo, React Native, Tamagui |
 | API | Express, TypeScript, Prisma, PostgreSQL |
+| GraphQL | Apollo Server (schema-first SDL) + Apollo Client + graphql-codegen — domain API; auth stays REST |
 | Validation | Zod schemas in @chops/shared |
 | Auth | JWT access tokens + refresh token rotation |
 | Styling | Tamagui tokens, themes, skins (light/dark + retro, neon, etc.) |
@@ -125,11 +127,17 @@ chops-app/
 | Build | pnpm workspaces + Turborepo |
 
 ### API Architecture
+Two transport layers over a shared service core:
 ```
-routes → controllers (thin, req/res only) → services (business logic) → Prisma
+REST:    routes  → controllers (thin) ─┐
+GraphQL: schema  → resolvers   (thin) ─┤→ services (business logic) → Prisma
 ```
+- **Auth stays REST** (login, signup, refresh, password reset) — cookie / refresh-token-rotation semantics are simpler and better-trodden over REST
+- **Domain data is GraphQL** (exercises, click tracks, sessions, programs, groups) — the domain is a connected graph consumed by two clients (web + mobile) with different data-shape and offline needs, so each client fetches exactly what it needs over one typed schema
+- Resolvers stay thin and call the **same service functions** controllers use — business logic lives in services only, so the two transports never duplicate or drift
 - Centralized error handling via `AppError` class + error middleware
-- All validation uses @chops/shared validators
+- Runtime validation uses @chops/shared (Zod) validators in the service layer; the GraphQL schema (SDL) is the API contract
+- Stack: Apollo Server on Express (schema-first SDL) + Apollo Client + GraphQL Code Generator for typed client operations (web + mobile)
 
 ### Web Architecture
 ```
@@ -477,16 +485,18 @@ Work is organized into three version milestones. Order within each accounts for 
 ### v1 — Solo practice works end-to-end (web + mobile)
 *Definition of done: a solo drummer can create content and run real practice sessions on both platforms, secured, with onboarding.*
 1. Exercise library CRUD *(API done; web frontend next)*
-2. Click track builder CRUD
-3. Practice session builder CRUD
-4. Metronome / live practice core
-5. User profile & settings
-6. Onboarding / first-run
-7. Progress / analytics (individual user)
-8. Mobile offline support
-9. Rate limiting / API security
-10. Theming polish
-11. Testing pass + deployment prep
+2. GraphQL API layer — Apollo Server over existing services; re-expose exercises as the first GraphQL resources (auth stays REST), wire up codegen for web + mobile
+   - **On completion:** record the decision in root `CLAUDE.md` (Architecture Decisions) and document the resolver→service + codegen patterns in `apps/api/CLAUDE.md` and the web/mobile CLAUDE.md files. Add the `graphql-codegen` command to §10.
+3. Click track builder CRUD *(GraphQL-native from here on)*
+4. Practice session builder CRUD
+5. Metronome / live practice core
+6. User profile & settings
+7. Onboarding / first-run
+8. Progress / analytics (individual user)
+9. Mobile offline support
+10. Rate limiting / API security
+11. Theming polish
+12. Testing pass + deployment prep
 
 ### v2 — Groups / org context + mobile polish
 *Definition of done: instructors and groups; mobile is first-class.*
@@ -526,6 +536,8 @@ These areas are not fully locked down. Tagged with the version where each must b
 - Built-in sound set structure
 - Rate limiter backend (in-memory vs. Redis)
 - Email templates / email provider choice (currently Nodemailer)
+- GraphQL schema-first (SDL) vs. code-first (Pothos/Nexus) — leaning schema-first for transferable, job-relevant learning
+- Whether to retire the exercise REST routes once GraphQL covers them, or keep both during the transition
 
 **v2**
 - Group invitation / join mechanics
@@ -554,5 +566,6 @@ These areas are not fully locked down. Tagged with the version where each must b
 - Keep code split into understandable pieces
 - Prefer explicitness over cleverness
 - Prisma schema is the source of truth for DB shape
+- Business logic lives in the service layer; REST controllers and GraphQL resolvers are thin transport layers over it — never duplicate logic across them
 - During active prototyping, optimize for momentum while keeping architecture sane
 - Follow each app's NEW-FEATURE.md playbook when adding features
