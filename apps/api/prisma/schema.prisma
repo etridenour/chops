@@ -67,7 +67,7 @@ model PasswordResetToken {
 model Exercise {
   id                    String @id @default(cuid())
   title                 String
-  fromXML               Boolean @default(false)
+  fromXml               Boolean @default(false)
   totalMeasures         Int
   userId                String
   user                  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
