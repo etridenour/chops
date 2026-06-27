@@ -55,8 +55,7 @@ export function Button({
 
   return (
     <View
-      tag="button"
-      type="button"
+      render="button"
       backgroundColor={v.bg}
       paddingVertical={s.py}
       paddingHorizontal={s.px}
