@@ -27,6 +27,7 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 ## Workflow Rules
 
 - Never auto-commit unless explicitly asked.
+- Proactively flag commit points: pause and suggest committing when a self-contained unit is complete, builds/passes, and tells one clear story (if the subject needs an "and", it's probably two commits). Keep unrelated concerns in separate commits (e.g. a build fix vs. feature work).
 - Explain planned changes before editing files.
 - Prefer editing existing files over creating new ones.
 - Keep changes minimal — no drive-by refactors or cleanups.

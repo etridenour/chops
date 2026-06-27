@@ -45,3 +45,5 @@ export {
 // Error state
 export { ErrorState } from "./components/ErrorState";
 export type { ErrorStateProps } from "./components/ErrorState";
+
+export { Skeleton } from "./components/Skeleton";
