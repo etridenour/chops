@@ -12,8 +12,10 @@ export interface Exercise {
   title: string;
   totalMeasures: number;
   timeSigChangeMeasures: ExerciseMeasure[];
-  originalTimeSigChangeMeasures?: ExerciseMeasure[]; // this is so the user can revert if created from xml
+  originalTimeSigChangeMeasures?: ExerciseMeasure[]; // for reverting if created from xml
   fromXml: boolean;
+  tags?: string[];
+  difficulty?: number;
   createdAt?: Date;
   updatedAt?: Date;
   userId?: string;

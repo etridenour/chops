@@ -18,7 +18,7 @@ export default function Exercises() {
     setError(null);
     try {
       const data = await fetchExercises();
-      setExercises(data);
+      setExercises(data.items);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

@@ -72,6 +72,8 @@ model Exercise {
   userId                String
   user                  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   timeSigChangeMeasures Json
+  tags                  String[] @default([])
+  difficulty            Int?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 

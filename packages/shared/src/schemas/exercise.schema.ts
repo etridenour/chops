@@ -16,6 +16,8 @@ export const createExerciseSchema = z.object({
     .array(exerciseMeasureSchema)
     .min(1, "At least one measure is required"),
   fromXml: z.boolean().optional(),
+  tags: z.array(z.string()).optional(),
+  difficulty: z.number().int().min(1).max(5).optional(),
 });
 
 export const updateExerciseSchema = createExerciseSchema.partial();

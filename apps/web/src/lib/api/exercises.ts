@@ -3,10 +3,14 @@ import {
   Exercise,
   CreateExerciseRequest,
   UpdateExerciseRequest,
+  Paginated,
 } from "@chops/shared";
 
-export async function fetchExercises(): Promise<Exercise[]> {
-  const res = await apiClient("/exercises");
+export async function fetchExercises(
+  page = 1,
+  pageSize = 20,
+): Promise<Paginated<Exercise>> {
+  const res = await apiClient(`/exercises?page=${page}&pageSize=${pageSize}`);
   if (!res.ok) {
     const err = await res.json();
     throw new Error(err.message || "Failed to load exercises");

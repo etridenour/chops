@@ -1,6 +1,7 @@
 import {
   CreateExerciseRequest,
   Exercise,
+  Paginated,
   UpdateExerciseRequest,
 } from "@chops/shared";
 import { prisma } from "../utils/prisma";
@@ -17,12 +18,29 @@ export async function createExercise(
   return exercise as unknown as Exercise;
 }
 
-export async function getExercises(userId: string): Promise<Exercise[]> {
-  const exercises = await prisma.exercise.findMany({
-    where: { userId },
-  });
+export async function getExercises(
+  userId: string,
+  page: number,
+  pageSize: number,
+): Promise<Paginated<Exercise>> {
+  const skip = (page - 1) * pageSize;
 
-  return exercises as unknown as Exercise[];
+  const [exercises, total] = await Promise.all([
+    prisma.exercise.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: pageSize,
+    }),
+    prisma.exercise.count({ where: { userId } }),
+  ]);
+
+  return {
+    items: exercises as unknown as Exercise[],
+    total,
+    page,
+    pageSize,
+  };
 }
 
 export async function getExerciseById(

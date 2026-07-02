@@ -36,8 +36,13 @@ export const getAll = async (
 ) => {
   try {
     const userId = (req as any).user?.sub;
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const pageSize = Math.min(
+      100,
+      Math.max(1, Number(req.query.pageSize) || 20),
+    );
 
-    const result = await exerciseService.getExercises(userId);
+    const result = await exerciseService.getExercises(userId, page, pageSize);
     return res.status(200).json(result);
   } catch (err) {
     next(err);
