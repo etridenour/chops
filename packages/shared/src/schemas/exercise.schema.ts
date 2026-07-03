@@ -1,6 +1,6 @@
 import z from "zod";
 
-const exerciseMeasureSchema = z.object({
+const timeSignatureSegmentSchema = z.object({
   measureCount: z.number().int().min(1),
   timeSigTop: z.number().min(1).max(16),
   timeSigBottom: z
@@ -10,8 +10,8 @@ const exerciseMeasureSchema = z.object({
 
 export const createExerciseSchema = z.object({
   title: z.string().min(1, "Exercise name is required"),
-  timeSigChangeMeasures: z
-    .array(exerciseMeasureSchema)
+  segments: z
+    .array(timeSignatureSegmentSchema)
     .min(1, "At least one measure is required"),
   fromXml: z.boolean().optional(),
   tags: z.array(z.string()).optional(),

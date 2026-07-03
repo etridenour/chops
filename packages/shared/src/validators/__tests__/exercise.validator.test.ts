@@ -6,10 +6,8 @@ import {
 
 const mockExercise = {
   title: "title",
-  totalMeasures: 8,
-  timeSigChangeMeasures: [
+  segments: [
     {
-      startingMeasure: 1,
       measureCount: 8,
       timeSigTop: 4,
       timeSigBottom: 4,
@@ -34,7 +32,7 @@ describe("validate exercise", () => {
   test("returns error if no timeSigMeasure", () => {
     const errors = validateCreateExercise({
       ...mockExercise,
-      timeSigChangeMeasures: [],
+      segments: [],
     });
 
     expect(errors[0].toLowerCase()).toContain("measure");
@@ -43,9 +41,7 @@ describe("validate exercise", () => {
   test("returns error if invalid timeSigBottom", () => {
     const errors = validateCreateExercise({
       ...mockExercise,
-      timeSigChangeMeasures: [
-        { ...mockExercise.timeSigChangeMeasures[0], timeSigBottom: 3 },
-      ],
+      segments: [{ ...mockExercise.segments[0], timeSigBottom: 3 }],
     });
 
     expect(errors[0].toLowerCase()).toContain("must be");

@@ -1,5 +1,5 @@
-import { ExerciseMeasure } from "../types/exercise";
+import { TimeSignatureSegment } from "../types/exercise";
 
-export function getTotalMeasures(measures: ExerciseMeasure[]): number {
-  return measures.reduce((sum, m) => sum + m.measureCount, 0);
+export function getTotalMeasures(segment: TimeSignatureSegment[]): number {
+  return segment.reduce((sum, s) => sum + s.measureCount, 0);
 }

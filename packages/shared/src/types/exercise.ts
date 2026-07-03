@@ -10,8 +10,8 @@ export type UpdateExerciseRequest = z.infer<typeof updateExerciseSchema>;
 export interface Exercise {
   id?: string;
   title: string;
-  timeSigChangeMeasures: ExerciseMeasure[];
-  originalTimeSigChangeMeasures?: ExerciseMeasure[]; // for reverting if created from xml
+  segments: TimeSignatureSegment[];
+  originalSegments?: TimeSignatureSegment[]; // for reverting if created from xml
   fromXml: boolean;
   tags?: string[];
   difficulty?: number;
@@ -20,7 +20,7 @@ export interface Exercise {
   userId?: string;
 }
 
-export interface ExerciseMeasure {
+export interface TimeSignatureSegment {
   measureCount: number;
   timeSigTop: number;
   timeSigBottom: number;
