@@ -50,6 +50,7 @@ vi.mock("@chops/ui", () => ({
   ),
   XStack: ({ children }: any) => <div>{children}</div>,
   Home: () => <svg data-testid="nav-icon" />,
+  Drum: () => <svg data-testid="nav-icon" />,
   Body: ({ children }: any) => <span>{children}</span>,
   Button: ({ children, onPress, loading, ...props }: any) => (
     <button

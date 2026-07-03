@@ -34,6 +34,7 @@ vi.mock("@chops/ui", () => ({
   ),
   XStack: ({ children }: any) => <div>{children}</div>,
   Home: () => <svg data-testid="nav-icon" />,
+  Drum: () => <svg data-testid="nav-icon" />,
   Body: ({ children }: any) => <span>{children}</span>,
 }));
 
@@ -58,7 +59,7 @@ describe("NavItems component", () => {
 
     render(<NavItems onNavigate={mockOnNavigate} />);
 
-    await user.click(screen.getByRole("link"));
+    await user.click(screen.getByRole("link", { name: "Home" }));
 
     expect(mockOnNavigate).toHaveBeenCalledTimes(1);
   });
@@ -68,6 +69,9 @@ describe("NavItems component", () => {
 
     render(<NavItems />);
 
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+      "href",
+      "/",
+    );
   });
 });
