@@ -1,14 +1,18 @@
 "use client";
 
-import { Exercise, ExerciseMeasure } from "@chops/shared";
-import { Body, H2, XStack, YStack } from "@chops/ui";
+import {
+  Exercise,
+  TimeSignatureSegment,
+  getTotalMeasures,
+} from "@chops/shared";
+import { Body, H2, Label, XStack, YStack } from "@chops/ui";
 
-function formatTimeSignatures(measures: ExerciseMeasure[]): string {
-  if (!measures?.length) {
+function formatTimeSignatures(segments: TimeSignatureSegment[]): string {
+  if (!segments?.length) {
     return "--";
   }
   let display = "";
-  measures.forEach((m, i) => {
+  segments.forEach((m, i) => {
     display += `${i === 0 ? "" : " → "}${m.timeSigTop}/${m.timeSigBottom}`;
   });
   return display;
@@ -19,11 +23,23 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
     <YStack>
       <H2>{exercise.title}</H2>
       <XStack gap="$2" padding="$3">
-        <Body color="$colorMuted">{exercise.totalMeasures} measures</Body>
         <Body color="$colorMuted">
-          {formatTimeSignatures(exercise.timeSigChangeMeasures)}
+          {getTotalMeasures(exercise.segments)} measures
         </Body>
+        <Body color="$colorMuted">
+          {formatTimeSignatures(exercise.segments)}
+        </Body>
+        {exercise.difficulty != null && (
+          <Body color="$colorMuted">Difficulty: {exercise.difficulty}</Body>
+        )}
       </XStack>
+      {exercise.tags && exercise.tags.length > 0 && (
+        <XStack gap="$2">
+          {exercise.tags.map((tag) => (
+            <Label key={tag}>{tag}</Label>
+          ))}
+        </XStack>
+      )}
     </YStack>
   );
 }
