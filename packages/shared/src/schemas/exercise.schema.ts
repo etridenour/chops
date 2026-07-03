@@ -1,8 +1,7 @@
 import z from "zod";
 
 const exerciseMeasureSchema = z.object({
-  startingMeasure: z.number(),
-  measureCount: z.number(),
+  measureCount: z.number().int().min(1),
   timeSigTop: z.number().min(1).max(16),
   timeSigBottom: z
     .number()
@@ -11,7 +10,6 @@ const exerciseMeasureSchema = z.object({
 
 export const createExerciseSchema = z.object({
   title: z.string().min(1, "Exercise name is required"),
-  totalMeasures: z.number().min(1),
   timeSigChangeMeasures: z
     .array(exerciseMeasureSchema)
     .min(1, "At least one measure is required"),
