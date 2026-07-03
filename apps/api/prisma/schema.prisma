@@ -68,10 +68,10 @@ model Exercise {
   id                    String @id @default(cuid())
   title                 String
   fromXml               Boolean @default(false)
-  totalMeasures         Int
   userId                String
   user                  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  timeSigChangeMeasures Json
+  segments              Json
+  originalSegments      Json?
   tags                  String[] @default([])
   difficulty            Int?
   createdAt             DateTime  @default(now())
