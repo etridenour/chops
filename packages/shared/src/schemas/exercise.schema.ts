@@ -12,7 +12,7 @@ export const createExerciseSchema = z.object({
   title: z.string().min(1, "Exercise name is required"),
   segments: z
     .array(timeSignatureSegmentSchema)
-    .min(1, "At least one measure is required"),
+    .min(1, "At least one segment is required"),
   fromXml: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   difficulty: z.number().int().min(1).max(5).optional(),

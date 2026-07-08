@@ -14,6 +14,7 @@ export { H1, H2, Body, Label, ErrorText, LinkText } from "./components/Text";
 export { SkinSelector } from "./components/SkinSelector";
 export { LoadingDrum } from "./components/LoadingDrum";
 export type { LoadingDrumProps } from "./components/LoadingDrum";
+export { ToggleGroup } from "./components/ToggleGroup";
 
 // Providers
 export { SkinProvider, useSkin } from "./providers/SkinProvider";

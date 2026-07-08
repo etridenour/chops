@@ -6,7 +6,7 @@ import { ExerciseCard } from "./exercise-card";
 
 export function ExerciseList({ exercises }: { exercises: Exercise[] }) {
   if (!exercises.length) {
-    return <Body>There are no Exercises yet</Body>;
+    return <Body textAlign="center">There are no Exercises yet</Body>;
   }
   return (
     <YStack gap="$2">
