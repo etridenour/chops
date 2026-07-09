@@ -12,22 +12,37 @@ import {
 } from "@chops/ui";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createExerciseSchema, CreateExerciseRequest } from "@chops/shared";
+import {
+  createExerciseSchema,
+  CreateExerciseRequest,
+  Exercise,
+} from "@chops/shared";
 import { TagInput } from "./tag-input";
 import { SegmentsEditor } from "./segments-editor";
 import { useState } from "react";
-import { createExercise } from "@/lib/api/exercises";
+import { createExercise, updateExercise } from "@/lib/api/exercises";
 import { useRouter } from "next/navigation";
 import { getErrorMessage } from "@/lib/errors";
 
-export default function ExerciseForm() {
+interface ExerciseFormProps {
+  exercise?: Exercise;
+}
+
+export default function ExerciseForm({ exercise }: ExerciseFormProps) {
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<CreateExerciseRequest>({
     resolver: zodResolver(createExerciseSchema),
-    defaultValues: { title: "", tags: [], segments: [] },
+    defaultValues: exercise
+      ? {
+          title: exercise.title,
+          difficulty: exercise.difficulty,
+          tags: exercise.tags,
+          segments: exercise.segments,
+        }
+      : { title: "", tags: [], segments: [] },
   });
 
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -35,9 +50,12 @@ export default function ExerciseForm() {
 
   const onSubmit = async (data: CreateExerciseRequest) => {
     setSubmitError(null);
-
     try {
-      await createExercise(data);
+      if (exercise?.id) {
+        await updateExercise(exercise.id, data);
+      } else {
+        await createExercise(data);
+      }
       router.push("/library");
     } catch (e) {
       setSubmitError(getErrorMessage(e));
@@ -50,7 +68,7 @@ export default function ExerciseForm() {
   return (
     <YStack gap="$5">
       <XStack justifyContent="space-between" alignItems="center">
-        <H1>New Exercise</H1>
+        <H1>{exercise?.id ? "Edit Exercise" : "New Exercise"}</H1>
       </XStack>
       <YStack gap="$1">
         <Label htmlFor="title">Title</Label>
@@ -108,7 +126,7 @@ export default function ExerciseForm() {
         loading={isSubmitting}
         maxWidth={300}
       >
-        Submit
+        {exercise?.id ? "Save" : "Create"}
       </Button>
       {submitError && <ErrorText>{submitError}</ErrorText>}
     </YStack>
