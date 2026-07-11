@@ -18,6 +18,15 @@ export async function fetchExercises(
   return res.json();
 }
 
+export async function fetchExerciseById(id: string): Promise<Exercise> {
+  const res = await apiClient(`/exercises/${id}`);
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to load exercise");
+  }
+  return res.json();
+}
+
 export async function createExercise(
   exercise: CreateExerciseRequest,
 ): Promise<Exercise> {
