@@ -1,3 +1,9 @@
+html {
+  /* Reserve the scrollbar gutter so opening a modal (which locks scroll)
+     doesn't remove the scrollbar and shift the layout. */
+  scrollbar-gutter: stable;
+}
+
 a {
   text-decoration: none;
   color: inherit;

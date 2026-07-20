@@ -21,14 +21,19 @@ import { TagInput } from "./tag-input";
 import { SegmentsEditor } from "./segments-editor";
 import { useState } from "react";
 import { createExercise, updateExercise } from "@/lib/api/exercises";
-import { useRouter } from "next/navigation";
 import { getErrorMessage } from "@/lib/errors";
 
 interface ExerciseFormProps {
   exercise?: Exercise;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export default function ExerciseForm({ exercise }: ExerciseFormProps) {
+export default function ExerciseForm({
+  exercise,
+  onSuccess,
+  onCancel,
+}: ExerciseFormProps) {
   const {
     control,
     handleSubmit,
@@ -46,7 +51,6 @@ export default function ExerciseForm({ exercise }: ExerciseFormProps) {
   });
 
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const router = useRouter();
 
   const onSubmit = async (data: CreateExerciseRequest) => {
     setSubmitError(null);
@@ -56,7 +60,7 @@ export default function ExerciseForm({ exercise }: ExerciseFormProps) {
       } else {
         await createExercise(data);
       }
-      router.push("/library");
+      onSuccess?.();
     } catch (e) {
       setSubmitError(getErrorMessage(e));
     }
@@ -67,9 +71,7 @@ export default function ExerciseForm({ exercise }: ExerciseFormProps) {
 
   return (
     <YStack gap="$5">
-      <XStack justifyContent="space-between" alignItems="center">
-        <H1>{exercise?.id ? "Edit Exercise" : "New Exercise"}</H1>
-      </XStack>
+      <H1>{exercise?.id ? "Edit Exercise" : "New Exercise"}</H1>
       <YStack gap="$1">
         <Label htmlFor="title">Title</Label>
         <Controller
@@ -108,26 +110,32 @@ export default function ExerciseForm({ exercise }: ExerciseFormProps) {
         )}
       </YStack>
 
-      <Label htmlFor="tags">Tags</Label>
-      <Controller
-        control={control}
-        name="tags"
-        render={({ field }) => (
-          <TagInput value={field.value ?? []} onChange={field.onChange} />
-        )}
-      />
+      <YStack gap="$1">
+        <Label htmlFor="tags">Tags</Label>
+        <Controller
+          control={control}
+          name="tags"
+          render={({ field }) => (
+            <TagInput value={field.value ?? []} onChange={field.onChange} />
+          )}
+        />
+      </YStack>
 
       <SegmentsEditor control={control} />
       {segmentsError && <ErrorText>{segmentsError}</ErrorText>}
 
-      <Button
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-        loading={isSubmitting}
-        maxWidth={300}
-      >
-        {exercise?.id ? "Save" : "Create"}
-      </Button>
+      <XStack gap="$3">
+        <Button variant="secondary" onPress={onCancel}>
+          Cancel
+        </Button>
+        <Button
+          onPress={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+          loading={isSubmitting}
+        >
+          {exercise?.id ? "Save" : "Create"}
+        </Button>
+      </XStack>
       {submitError && <ErrorText>{submitError}</ErrorText>}
     </YStack>
   );

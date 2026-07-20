@@ -5,6 +5,7 @@ import {
   Popover,
   YStack,
 } from "@chops/ui";
+import { useRef, useState } from "react";
 
 interface ExerciseCardMenuProps {
   onEdit: () => void;
@@ -12,25 +13,91 @@ interface ExerciseCardMenuProps {
 }
 
 export function ExerciseCardMenu({ onEdit, onDelete }: ExerciseCardMenuProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  // Guard against Tamagui's Popover re-opening right after an outside-dismiss
+  // when the trigger itself is clicked to close.
+  const closedAt = useRef(0);
+
+  const handleMenuOpenChange = (next: boolean) => {
+    if (next && Date.now() - closedAt.current < 250) return;
+    if (!next) closedAt.current = Date.now();
+    setMenuOpen(next);
+  };
+
   return (
-    <Popover placement="bottom-end">
-      <Popover.Trigger asChild>
-        <Button variant="ghost" size="sm">
-          <MoreVertical size={18} color="$colorMuted" />
-        </Button>
-      </Popover.Trigger>
-      <Popover.Content>
-        <YStack>
-          <Button onPress={onEdit}>Edit</Button>
-          <ConfirmDialog
-            trigger={<Button variant="ghost">Delete</Button>}
-            title="Delete exercise?"
-            description="This can't be undone."
-            confirmLabel="Delete"
-            onConfirm={onDelete}
+    <>
+      <Popover
+        open={menuOpen}
+        onOpenChange={handleMenuOpenChange}
+        placement="bottom-end"
+      >
+        <Popover.Trigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            hoverStyle={{ backgroundColor: "$backgroundMutedPress" }}
+          >
+            <MoreVertical size={18} color="$colorMuted" />
+          </Button>
+        </Popover.Trigger>
+        <Popover.Content
+          backgroundColor="$background"
+          borderWidth={1}
+          borderColor="$borderColor"
+          borderRadius="$3"
+          padding="$1"
+          minWidth={180}
+          shadowColor="$black"
+          shadowOpacity={0.15}
+          shadowRadius={12}
+          shadowOffset={{ width: 0, height: 4 }}
+        >
+          <Popover.Arrow
+            size={12}
+            backgroundColor="$background"
+            borderColor="$borderColor"
+            borderWidth={1}
           />
-        </YStack>
-      </Popover.Content>
-    </Popover>
+          <YStack width="100%">
+            <Button
+              variant="ghost"
+              size="sm"
+              fullWidth
+              justifyContent="flex-start"
+              hoverStyle={{ backgroundColor: "$backgroundMutedHover" }}
+              onPress={() => {
+                setMenuOpen(false);
+                onEdit();
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              fullWidth
+              justifyContent="flex-start"
+              hoverStyle={{ backgroundColor: "$backgroundMutedHover" }}
+              onPress={() => {
+                setMenuOpen(false);
+                setConfirmOpen(true);
+              }}
+            >
+              Delete
+            </Button>
+          </YStack>
+        </Popover.Content>
+      </Popover>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Delete exercise?"
+        description="This can't be undone."
+        confirmLabel="Delete"
+        onConfirm={onDelete}
+      />
+    </>
   );
 }

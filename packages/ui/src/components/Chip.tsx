@@ -6,7 +6,7 @@ export const Chip = styled(Paragraph, {
   fontSize: "$2",
   color: "$colorMuted",
   borderWidth: 1,
-  borderColor: "$borderColor",
+  borderColor: "$colorSubtle",
   paddingHorizontal: "$2",
   paddingVertical: "$1",
   borderRadius: "$round",

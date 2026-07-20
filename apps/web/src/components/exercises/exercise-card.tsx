@@ -6,6 +6,7 @@ import {
   getTotalMeasures,
 } from "@chops/shared";
 import { Body, Card, Chip, XStack } from "@chops/ui";
+import { useState } from "react";
 import { ExerciseCardMenu } from "./exercise-card-menu";
 
 const MAX_TAGS = 3;
@@ -46,6 +47,7 @@ export function ExerciseCard({
   const tags = exercise.tags ?? [];
   const visibleTags = tags.slice(0, MAX_TAGS);
   const overflowCount = tags.length - visibleTags.length;
+  const [pressed, setPressed] = useState(false);
 
   return (
     <Card
@@ -54,7 +56,9 @@ export function ExerciseCard({
       role="button"
       tabIndex={0}
       focusStyle={{ borderColor: "$borderColorFocus" }}
-      pressStyle={{ backgroundColor: "$backgroundMutedPress" }}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      backgroundColor={pressed ? "$backgroundMutedPress" : "$backgroundMuted"}
       onKeyDown={(e) => {
         if (e.target !== e.currentTarget) return; // came from the kebab, not the card
         if (e.key === "Enter" || e.key === " ") {
@@ -67,7 +71,11 @@ export function ExerciseCard({
         <Body flex={1} numberOfLines={1} fontWeight="600">
           {exercise.title}
         </Body>
-        <XStack onPress={(e) => e.stopPropagation()}>
+        <XStack
+          onPress={(e) => e.stopPropagation()}
+          onPressIn={(e) => e.stopPropagation()}
+          onPressOut={(e) => e.stopPropagation()}
+        >
           <ExerciseCardMenu onEdit={onEdit} onDelete={onDelete} />
         </XStack>
       </XStack>
