@@ -13,6 +13,7 @@ export type { InputProps } from "./components/Input";
 export { H1, H2, Body, Label, ErrorText, LinkText } from "./components/Text";
 export { Chip } from "./components/Chip";
 export { Card } from "./components/Card";
+export { BackButton } from "./components/BackButton";
 export { SkinSelector } from "./components/SkinSelector";
 export { LoadingDrum } from "./components/LoadingDrum";
 export type { LoadingDrumProps } from "./components/LoadingDrum";
