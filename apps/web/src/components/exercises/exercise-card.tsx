@@ -6,6 +6,7 @@ import {
   getTotalMeasures,
 } from "@chops/shared";
 import { Body, H2, Label, XStack, YStack } from "@chops/ui";
+import { ExerciseCardMenu } from "./exercise-card-menu";
 
 function formatTimeSignatures(segments: TimeSignatureSegment[]): string {
   if (!segments?.length) {
@@ -18,10 +19,23 @@ function formatTimeSignatures(segments: TimeSignatureSegment[]): string {
   return display;
 }
 
-export function ExerciseCard({ exercise }: { exercise: Exercise }) {
+interface ExerciseCardProps {
+  exercise: Exercise;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+export function ExerciseCard({
+  exercise,
+  onEdit,
+  onDelete,
+}: ExerciseCardProps) {
   return (
     <YStack>
-      <H2>{exercise.title}</H2>
+      <XStack>
+        <H2>{exercise.title}</H2>
+        <ExerciseCardMenu onEdit={onEdit} onDelete={onDelete} />
+      </XStack>
       <XStack gap="$2" padding="$3">
         <Body color="$colorMuted">
           {getTotalMeasures(exercise.segments)} measures

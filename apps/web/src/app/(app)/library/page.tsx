@@ -2,7 +2,7 @@
 
 import { ExerciseList } from "@/components/exercises/exercise-list";
 import { ExerciseListSkeleton } from "@/components/exercises/exercise-list-skeleton";
-import { fetchExercises } from "@/lib/api/exercises";
+import { deleteExercise, fetchExercises } from "@/lib/api/exercises";
 import { getErrorMessage } from "@/lib/errors";
 import { Exercise } from "@chops/shared";
 import { Button, ErrorState, H1, XStack, YStack } from "@chops/ui";
@@ -33,6 +33,20 @@ export default function Exercises() {
     load();
   }, [load]);
 
+  const handleEdit = (id: string) => {
+    router.push(`/library/${id}/edit`);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteExercise(id);
+      const filteredExercises = exercises.filter((e) => e.id !== id);
+      setExercises(filteredExercises);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    }
+  };
+
   return (
     <YStack padding="$4" gap="$4">
       <XStack justifyContent="space-between" alignItems="center">
@@ -47,7 +61,11 @@ export default function Exercises() {
       ) : error ? (
         <ErrorState message={error} onRetry={load} />
       ) : (
-        <ExerciseList exercises={exercises} />
+        <ExerciseList
+          exercises={exercises}
+          onEdit={(id) => handleEdit(id)}
+          onDelete={(id) => handleDelete(id)}
+        />
       )}
     </YStack>
   );

@@ -15,6 +15,7 @@ export { SkinSelector } from "./components/SkinSelector";
 export { LoadingDrum } from "./components/LoadingDrum";
 export type { LoadingDrumProps } from "./components/LoadingDrum";
 export { ToggleGroup } from "./components/ToggleGroup";
+export { ConfirmDialog } from "./components/ConfirmDialog";
 
 // Providers
 export { SkinProvider, useSkin } from "./providers/SkinProvider";
@@ -29,6 +30,8 @@ export {
   Separator,
   Spinner,
   Sheet,
+  Popover,
+  AlertDialog,
 } from "tamagui";
 export { useTheme, useMedia } from "@tamagui/core";
 
@@ -41,6 +44,8 @@ export {
   X,
   Home,
   LogOut,
+  MoreVertical,
+  ChevronLeft,
 } from "@tamagui/lucide-icons";
 
 // Error state
