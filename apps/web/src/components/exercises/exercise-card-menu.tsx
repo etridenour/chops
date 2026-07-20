@@ -14,9 +14,9 @@ interface ExerciseCardMenuProps {
 export function ExerciseCardMenu({ onEdit, onDelete }: ExerciseCardMenuProps) {
   return (
     <Popover placement="bottom-end">
-      <Popover.Trigger>
-        <Button>
-          <MoreVertical size={18} />
+      <Popover.Trigger asChild>
+        <Button variant="ghost" size="sm">
+          <MoreVertical size={18} color="$colorMuted" />
         </Button>
       </Popover.Trigger>
       <Popover.Content>

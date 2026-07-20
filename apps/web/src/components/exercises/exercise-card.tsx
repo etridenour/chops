@@ -5,8 +5,10 @@ import {
   TimeSignatureSegment,
   getTotalMeasures,
 } from "@chops/shared";
-import { Body, H2, Label, XStack, YStack } from "@chops/ui";
+import { Body, Card, Chip, XStack } from "@chops/ui";
 import { ExerciseCardMenu } from "./exercise-card-menu";
+
+const MAX_TAGS = 3;
 
 function formatTimeSignatures(segments: TimeSignatureSegment[]): string {
   if (!segments?.length) {
@@ -17,6 +19,17 @@ function formatTimeSignatures(segments: TimeSignatureSegment[]): string {
     display += `${i === 0 ? "" : " → "}${m.timeSigTop}/${m.timeSigBottom}`;
   });
   return display;
+}
+
+function formatMeta(exercise: Exercise): string {
+  const parts = [
+    `${getTotalMeasures(exercise.segments)} measures`,
+    formatTimeSignatures(exercise.segments),
+  ];
+  if (exercise.difficulty != null) {
+    parts.push(`Difficulty ${exercise.difficulty}`);
+  }
+  return parts.join(" · ");
 }
 
 interface ExerciseCardProps {
@@ -30,30 +43,48 @@ export function ExerciseCard({
   onEdit,
   onDelete,
 }: ExerciseCardProps) {
+  const tags = exercise.tags ?? [];
+  const visibleTags = tags.slice(0, MAX_TAGS);
+  const overflowCount = tags.length - visibleTags.length;
+
   return (
-    <YStack>
-      <XStack>
-        <H2>{exercise.title}</H2>
-        <ExerciseCardMenu onEdit={onEdit} onDelete={onDelete} />
-      </XStack>
-      <XStack gap="$2" padding="$3">
-        <Body color="$colorMuted">
-          {getTotalMeasures(exercise.segments)} measures
+    <Card
+      onPress={onEdit}
+      cursor="pointer"
+      role="button"
+      tabIndex={0}
+      focusStyle={{ borderColor: "$borderColorFocus" }}
+      pressStyle={{ backgroundColor: "$backgroundMutedPress" }}
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return; // came from the kebab, not the card
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onEdit();
+        }
+      }}
+    >
+      <XStack justifyContent="space-between" alignItems="center" gap="$2">
+        <Body flex={1} numberOfLines={1} fontWeight="600">
+          {exercise.title}
         </Body>
-        <Body color="$colorMuted">
-          {formatTimeSignatures(exercise.segments)}
-        </Body>
-        {exercise.difficulty != null && (
-          <Body color="$colorMuted">Difficulty: {exercise.difficulty}</Body>
-        )}
-      </XStack>
-      {exercise.tags && exercise.tags.length > 0 && (
-        <XStack gap="$2">
-          {exercise.tags.map((tag) => (
-            <Label key={tag}>{tag}</Label>
-          ))}
+        <XStack onPress={(e) => e.stopPropagation()}>
+          <ExerciseCardMenu onEdit={onEdit} onDelete={onDelete} />
         </XStack>
-      )}
-    </YStack>
+      </XStack>
+      <XStack alignItems="center" gap="$2" flexWrap="nowrap">
+        <Body
+          flexShrink={1}
+          numberOfLines={1}
+          fontSize="$2"
+          color="$colorMuted"
+        >
+          {formatMeta(exercise)}
+        </Body>
+        {visibleTags.map((tag) => (
+          <Chip key={tag}>{tag}</Chip>
+        ))}
+        {overflowCount > 0 && <Chip>+{overflowCount}</Chip>}
+      </XStack>
+    </Card>
   );
 }
