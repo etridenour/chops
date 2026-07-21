@@ -22,7 +22,7 @@ export function SegmentsEditor({
   });
 
   return (
-    <YStack gap="$5">
+    <YStack gap="$4">
       {fields.map((field, index) => (
         <XStack key={field.id} gap="$4" alignItems="center">
           <Controller
@@ -69,7 +69,7 @@ export function SegmentsEditor({
 
           <Button
             variant="secondary"
-            marginLeft={40}
+            marginLeft="auto"
             onPress={() => remove(index)}
           >
             Remove
@@ -78,7 +78,7 @@ export function SegmentsEditor({
       ))}
 
       <Button
-        width={200}
+        alignSelf="flex-start"
         onPress={() =>
           append({ measureCount: 8, timeSigTop: 4, timeSigBottom: 4 })
         }

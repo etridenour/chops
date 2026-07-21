@@ -38,19 +38,21 @@ export default function SingleExercise() {
     <YStack padding="$4" gap="$4">
       <BackButton label="Library" onPress={toLibrary} alignSelf="flex-start" />
 
-      {isLoading ? (
-        <YStack padding="$4" alignItems="center">
-          <Spinner />
-        </YStack>
-      ) : error ? (
-        <ErrorState message={error} onRetry={load} />
-      ) : (
-        <ExerciseForm
-          exercise={exercise}
-          onSuccess={toLibrary}
-          onCancel={toLibrary}
-        />
-      )}
+      <YStack maxWidth={560} width="100%" alignSelf="center">
+        {isLoading ? (
+          <YStack padding="$4" alignItems="center">
+            <Spinner />
+          </YStack>
+        ) : error ? (
+          <ErrorState message={error} onRetry={load} />
+        ) : (
+          <ExerciseForm
+            exercise={exercise}
+            onSuccess={toLibrary}
+            onCancel={toLibrary}
+          />
+        )}
+      </YStack>
     </YStack>
   );
 }

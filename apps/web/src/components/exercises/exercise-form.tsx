@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Body,
   Button,
   ErrorText,
   H1,
@@ -10,12 +11,13 @@ import {
   XStack,
   YStack,
 } from "@chops/ui";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createExerciseSchema,
   CreateExerciseRequest,
   Exercise,
+  getTotalMeasures,
 } from "@chops/shared";
 import { TagInput } from "./tag-input";
 import { SegmentsEditor } from "./segments-editor";
@@ -52,6 +54,13 @@ export default function ExerciseForm({
 
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Live total measures (derived, not stored). Coalesce undefined counts from
+  // mid-edit empty inputs so the readout doesn't flash NaN.
+  const segments = useWatch({ control, name: "segments" }) ?? [];
+  const totalMeasures = getTotalMeasures(
+    segments.map((s) => ({ ...s, measureCount: s.measureCount || 0 })),
+  );
+
   const onSubmit = async (data: CreateExerciseRequest) => {
     setSubmitError(null);
     try {
@@ -70,8 +79,9 @@ export default function ExerciseForm({
     errors.segments?.root?.message ?? errors.segments?.message;
 
   return (
-    <YStack gap="$5">
+    <YStack gap="$7">
       <H1>{exercise?.id ? "Edit Exercise" : "New Exercise"}</H1>
+
       <YStack gap="$1">
         <Label htmlFor="title">Title</Label>
         <Controller
@@ -89,6 +99,26 @@ export default function ExerciseForm({
           )}
         />
         {errors.title && <ErrorText>{errors.title.message}</ErrorText>}
+      </YStack>
+
+      <YStack gap="$2">
+        <XStack justifyContent="space-between" alignItems="center">
+          <Label>Time signatures</Label>
+          <Body color="$colorMuted">{totalMeasures} measures total</Body>
+        </XStack>
+        <SegmentsEditor control={control} />
+        {segmentsError && <ErrorText>{segmentsError}</ErrorText>}
+      </YStack>
+
+      <YStack gap="$1">
+        <Label htmlFor="tags">Tags</Label>
+        <Controller
+          control={control}
+          name="tags"
+          render={({ field }) => (
+            <TagInput value={field.value ?? []} onChange={field.onChange} />
+          )}
+        />
       </YStack>
 
       <YStack gap="$1">
@@ -110,21 +140,7 @@ export default function ExerciseForm({
         )}
       </YStack>
 
-      <YStack gap="$1">
-        <Label htmlFor="tags">Tags</Label>
-        <Controller
-          control={control}
-          name="tags"
-          render={({ field }) => (
-            <TagInput value={field.value ?? []} onChange={field.onChange} />
-          )}
-        />
-      </YStack>
-
-      <SegmentsEditor control={control} />
-      {segmentsError && <ErrorText>{segmentsError}</ErrorText>}
-
-      <XStack gap="$3">
+      <XStack gap="$3" justifyContent="flex-end" marginTop="$2">
         <Button variant="secondary" onPress={onCancel}>
           Cancel
         </Button>
