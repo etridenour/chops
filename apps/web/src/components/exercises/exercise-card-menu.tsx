@@ -16,7 +16,8 @@ export function ExerciseCardMenu({ onEdit, onDelete }: ExerciseCardMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   // Guard against Tamagui's Popover re-opening right after an outside-dismiss
-  // when the trigger itself is clicked to close.
+  // when the trigger itself is clicked to close. When the menu open is clicked an overlay is clicked
+  // to close the menu, but it also triggers a re-open. This is a workaround to prevent that from happening.
   const closedAt = useRef(0);
 
   const handleMenuOpenChange = (next: boolean) => {
