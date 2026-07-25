@@ -35,7 +35,7 @@ describe("validate exercise", () => {
       segments: [],
     });
 
-    expect(errors[0].toLowerCase()).toContain("measure");
+    expect(errors[0].toLowerCase()).toContain("segment");
   });
 
   test("returns error if invalid timeSigBottom", () => {

@@ -49,7 +49,11 @@ export default function ExerciseForm({
           tags: exercise.tags,
           segments: exercise.segments,
         }
-      : { title: "", tags: [], segments: [] },
+      : {
+          title: "",
+          tags: [],
+          segments: [{ measureCount: 8, timeSigTop: 4, timeSigBottom: 4 }],
+        },
   });
 
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -111,7 +115,7 @@ export default function ExerciseForm({
       </YStack>
 
       <YStack gap="$1">
-        <Label htmlFor="tags">Tags</Label>
+        <Label>Tags</Label>
         <Controller
           control={control}
           name="tags"
@@ -122,7 +126,7 @@ export default function ExerciseForm({
       </YStack>
 
       <YStack gap="$1">
-        <Label htmlFor="difficulty">Difficulty</Label>
+        <Label>Difficulty</Label>
         <Controller
           control={control}
           name="difficulty"

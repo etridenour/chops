@@ -67,13 +67,15 @@ export function SegmentsEditor({
             />
           </YStack>
 
-          <Button
-            variant="secondary"
-            marginLeft="auto"
-            onPress={() => remove(index)}
-          >
-            Remove
-          </Button>
+          {fields.length > 1 && (
+            <Button
+              variant="secondary"
+              marginLeft="auto"
+              onPress={() => remove(index)}
+            >
+              Remove
+            </Button>
+          )}
         </XStack>
       ))}
 
