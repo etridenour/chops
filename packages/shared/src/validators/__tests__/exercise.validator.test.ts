@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  parseExerciseQuery,
   validateCreateExercise,
   validateUpdateExercise,
 } from "../exercise.validator";
@@ -58,5 +59,51 @@ describe("validate exercise", () => {
     const errors = validateUpdateExercise({});
 
     expect(errors).toEqual([]);
+  });
+});
+
+describe("parseExerciseQuery", () => {
+  test("defaults give page 1 and pagesize 20 if {} is provided", () => {
+    const response = parseExerciseQuery({});
+
+    expect(response).toEqual({ ok: true, data: { page: 1, pageSize: 20 } });
+  });
+
+  test.each([
+    ["pageSize above max", { pageSize: "101" }],
+    ["page below min", { page: "0" }],
+    ["search over 100 chars", { search: "a".repeat(101) }],
+    ["difficulty above 5", { difficulty: "6" }],
+  ])("rejects %s", (_label, input) => {
+    expect(parseExerciseQuery(input)).toEqual({
+      ok: false,
+      errors: expect.arrayContaining([expect.any(String)]),
+    });
+  });
+
+  test.each([
+    ["splits on commas", "flam,drag", ["flam", "drag"]],
+    ["trims whitespace", "flam, drag ", ["flam", "drag"]],
+    ["drops blank entries", "flam,,drag", ["flam", "drag"]],
+    ["empty string gives empty array", "", []],
+  ])("tags %s", (_label, input, expected) => {
+    expect(parseExerciseQuery({ tags: input })).toEqual({
+      ok: true,
+      data: expect.objectContaining({ tags: expected }),
+    });
+  });
+
+  test("empty search stays empty", () => {
+    expect(parseExerciseQuery({ search: "" })).toEqual({
+      ok: true,
+      data: expect.objectContaining({ search: "" }),
+    });
+  });
+
+  test('difficulty "1,2,3" becomes [1,2,3]', () => {
+    expect(parseExerciseQuery({ difficulty: "1,2,3" })).toEqual({
+      ok: true,
+      data: expect.objectContaining({ difficulty: [1, 2, 3] }),
+    });
   });
 });
