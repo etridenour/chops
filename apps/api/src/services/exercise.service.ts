@@ -1,9 +1,11 @@
 import {
   CreateExerciseRequest,
   Exercise,
+  ExerciseQueryRequest,
   Paginated,
   UpdateExerciseRequest,
 } from "@chops/shared";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../utils/prisma";
 import { AppError } from "../errors/AppError";
 
@@ -18,21 +20,36 @@ export async function createExercise(
   return exercise as unknown as Exercise;
 }
 
+export function buildExerciseWhere(
+  userId: string,
+  filters: Pick<ExerciseQueryRequest, "search" | "tags" | "difficulty">,
+): Prisma.ExerciseWhereInput {
+  const { search, tags, difficulty } = filters;
+
+  return {
+    userId,
+    ...(search && { title: { contains: search, mode: "insensitive" } }),
+    ...(tags?.length && { tags: { hasSome: tags } }),
+    ...(difficulty?.length && { difficulty: { in: difficulty } }),
+  };
+}
+
 export async function getExercises(
   userId: string,
-  page: number,
-  pageSize: number,
+  filters: ExerciseQueryRequest,
 ): Promise<Paginated<Exercise>> {
+  const { page, pageSize } = filters;
+  const where = buildExerciseWhere(userId, filters);
   const skip = (page - 1) * pageSize;
 
   const [exercises, total] = await Promise.all([
     prisma.exercise.findMany({
-      where: { userId },
+      where,
       orderBy: { createdAt: "desc" },
       skip,
       take: pageSize,
     }),
-    prisma.exercise.count({ where: { userId } }),
+    prisma.exercise.count({ where }),
   ]);
 
   return {

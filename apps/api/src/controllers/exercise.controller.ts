@@ -1,5 +1,6 @@
 import {
   CreateExerciseRequest,
+  parseExerciseQuery,
   UpdateExerciseRequest,
   validateCreateExercise,
   validateUpdateExercise,
@@ -35,14 +36,12 @@ export const getAll = async (
   next: NextFunction,
 ) => {
   try {
+    const response = parseExerciseQuery(req.query);
+    if (!response.ok) {
+      return res.status(400).json({ message: response.errors[0] });
+    }
     const userId = (req as any).user?.sub;
-    const page = Math.max(1, Number(req.query.page) || 1);
-    const pageSize = Math.min(
-      100,
-      Math.max(1, Number(req.query.pageSize) || 20),
-    );
-
-    const result = await exerciseService.getExercises(userId, page, pageSize);
+    const result = await exerciseService.getExercises(userId, response.data);
     return res.status(200).json(result);
   } catch (err) {
     next(err);
