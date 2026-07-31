@@ -18,6 +18,7 @@ export { SkinSelector } from "./components/SkinSelector";
 export { LoadingDrum } from "./components/LoadingDrum";
 export type { LoadingDrumProps } from "./components/LoadingDrum";
 export { ToggleGroup } from "./components/ToggleGroup";
+export { ToggleGroupMulti } from "./components/ToggleGroupMulti";
 export { ConfirmDialog } from "./components/ConfirmDialog";
 
 // Providers
