@@ -81,3 +81,14 @@ export async function deleteExercise(id: string): Promise<void> {
     throw new Error(err.message || "Failed to delete exercise");
   }
 }
+
+export async function fetchExerciseTags(): Promise<string[]> {
+  const res = await apiClient(`/exercises/tags`, {
+    method: "GET",
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to fetch exercise tags");
+  }
+  return res.json();
+}

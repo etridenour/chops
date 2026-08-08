@@ -102,3 +102,17 @@ export async function deleteExercise(
 
   return;
 }
+
+export async function getTags(userId: string): Promise<string[]> {
+  const tags = await prisma.exercise.findMany({
+    where: { userId },
+    select: { tags: true },
+  });
+
+  const uniqueTags = new Set<string>();
+  tags.forEach((exercise) => {
+    exercise.tags.forEach((tag) => uniqueTags.add(tag));
+  });
+
+  return Array.from(uniqueTags);
+}

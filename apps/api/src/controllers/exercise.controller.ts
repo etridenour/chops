@@ -104,3 +104,18 @@ export const remove = async (
     next(err);
   }
 };
+
+// GET /exercises/tags
+export const getTags = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = (req as any).user?.sub;
+    const result = await exerciseService.getTags(userId);
+    return res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+};

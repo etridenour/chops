@@ -27,7 +27,6 @@ export function ToggleGroupMulti<T extends string | number>({
     <XStack gap="$2">
       {options.map((option) => (
         <Button
-          width="$8"
           key={option}
           variant={value.includes(option) ? "primary" : "secondary"}
           onPress={() => handleChange(option)}
