@@ -4,6 +4,7 @@ import {
   fetchExerciseTags,
 } from "@/lib/api/exercises";
 import { getErrorMessage } from "@/lib/errors";
+import { useDelayedLoading } from "@/hooks/use-delayed-loading";
 import { Exercise, parseExerciseQuery } from "@chops/shared";
 import {
   Button,
@@ -31,17 +32,20 @@ export function ExerciseLibrary() {
     searchParams.get("search") || "",
   );
   const [tags, setTags] = useState<string[]>([]);
+  const [tagError, setTagError] = useState<string | null>(null);
   // Bumped by the retry button to re-run the fetch effect.
   const [retryCount, setRetryCount] = useState<number>(0);
   const searchParamsString = searchParams.toString();
   const hasActiveFilters = !!searchText || !!searchParamsString;
+  // Dim only once a refetch is slow enough to be worth showing.
+  const showFetching = useDelayedLoading(isFetching);
 
   const loadTags = useCallback(async () => {
     try {
       const data = await fetchExerciseTags();
       setTags(data);
     } catch (err) {
-      setError(getErrorMessage(err));
+      setTagError(getErrorMessage(err));
     }
   }, []);
 
@@ -137,11 +141,15 @@ export function ExerciseLibrary() {
           onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
           placeholder="Search"
         />
-        <ToggleGroupMulti
-          options={tags}
-          value={searchParams.get("tags")?.split(",") || []}
-          onChange={(v) => writeUrl("tags", v.join(","))}
-        />
+        {tagError ? (
+          <ErrorText>{tagError}</ErrorText>
+        ) : (
+          <ToggleGroupMulti
+            options={tags}
+            value={searchParams.get("tags")?.split(",") || []}
+            onChange={(v) => writeUrl("tags", v.join(","))}
+          />
+        )}
         <ToggleGroupMulti
           options={[1, 2, 3, 4, 5]}
           value={searchParams.get("difficulty")?.split(",")?.map(Number) || []}
@@ -178,7 +186,7 @@ export function ExerciseLibrary() {
             exercises={exercises}
             onEdit={(id) => handleEdit(id)}
             onDelete={(id) => handleDelete(id)}
-            isFetching={isFetching}
+            isFetching={showFetching}
             hasActiveFilters={hasActiveFilters}
           />
         </YStack>
