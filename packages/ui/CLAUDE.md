@@ -31,6 +31,12 @@ Cross-platform component library shared by web and mobile. Single source of trut
 - **LoadingDrum** — animated drum icon for loading states. Props: size, color, style.
 - **Skin** — SkinProvider, useSkin, SkinSelector
 
+## Testing
+
+- `pnpm test` runs vitest. Tests render **real Tamagui** (no mocking) — import `render`/`screen` from `src/test/render.tsx`, which wraps in `TamaguiProvider`.
+- `vitest.config.ts` aliases `react-native` → web shims and inlines the icon packages; don't remove either, see [docs/TESTING.md](../../docs/TESTING.md).
+- `build` uses `tsconfig.build.json` (excludes tests); `lint` uses `tsconfig.json` (typechecks tests). Keep test files out of `dist/`.
+
 ## After Changes
 
 Run `pnpm build` then verify on both web (`pnpm dev:web`) and mobile (`pnpm dev:mobile`).

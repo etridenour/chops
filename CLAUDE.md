@@ -61,6 +61,7 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 ## Documentation
 
 - [Getting Started](docs/GETTING-STARTED.md) — Setup, prerequisites, running the apps
+- [Testing Guide](docs/TESTING.md) — Stack, per-package setup, mock boundary, how to write tests
 - [Theming Guide](docs/THEMING.md) — Tamagui tokens, themes, skins, components
 - [Turborepo Guide](docs/TURBOREPO.md) — Monorepo build system
 - [Deployment](docs/DEPLOYMENT.md) — Deploying web, API, and mobile to production
