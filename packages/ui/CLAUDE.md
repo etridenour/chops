@@ -35,6 +35,7 @@ Cross-platform component library shared by web and mobile. Single source of trut
 
 - `pnpm test` runs vitest. Tests render **real Tamagui** (no mocking) — import `render`/`screen` from `src/test/render.tsx`, which wraps in `TamaguiProvider`.
 - `vitest.config.ts` aliases `react-native` → web shims and inlines the icon packages; don't remove either, see [docs/TESTING.md](../../docs/TESTING.md).
+- Component tests live in `src/components/__tests__/`. `Button` renders a real `<button>`, so reach controls with `getByRole("button", { name })` and drive them with `fireEvent.click` (it triggers Tamagui's `onPress`).
 - `build` uses `tsconfig.build.json` (excludes tests); `lint` uses `tsconfig.json` (typechecks tests). Keep test files out of `dist/`.
 
 ## After Changes
