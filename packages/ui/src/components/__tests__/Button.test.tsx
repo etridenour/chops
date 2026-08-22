@@ -43,10 +43,30 @@ describe("Button", () => {
       expect(onPress).not.toHaveBeenCalled();
     });
 
-    // BACKLOG: `disabled` never reaches the DOM — the <button> has no `disabled`
-    // or `aria-disabled` attribute, only opacity 0.5. It stays focusable and is
-    // announced as an ordinary enabled button. Write this once that's fixed.
-    it.todo("exposes its disabled state to assistive tech");
+    it("marks itself disabled to assistive tech", () => {
+      render(<Button disabled>Save</Button>);
+
+      expect(screen.getByRole("button")).toHaveAttribute(
+        "aria-disabled",
+        "true",
+      );
+    });
+
+    it("is not marked disabled when it is not", () => {
+      render(<Button>Save</Button>);
+
+      expect(screen.getByRole("button")).not.toHaveAttribute("aria-disabled");
+    });
+  });
+
+  // On web the <button> element carries this role implicitly, so this assertion
+  // looks redundant. It isn't: `render="button"` is dropped on native, where the
+  // explicit role is the only thing making this a button to VoiceOver/TalkBack.
+  // Nothing else in the suite would catch someone deleting it.
+  it("carries an explicit button role for native", () => {
+    render(<Button>Save</Button>);
+
+    expect(screen.getByRole("button")).toHaveAttribute("role", "button");
   });
 
   describe("loading", () => {
@@ -62,6 +82,27 @@ describe("Button", () => {
       render(<Button loading>Save</Button>);
 
       expect(screen.queryByText("Save")).not.toBeInTheDocument();
+    });
+
+    it("announces that it is busy while loading", () => {
+      render(<Button loading>Save</Button>);
+
+      expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "true");
+    });
+
+    it("keeps its accessible name while loading", () => {
+      render(<Button loading>Save</Button>);
+
+      // The visible label is gone (see above), so without an aria-label the
+      // button would announce as nameless right when the user needs to know
+      // which action is in flight.
+      expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+    });
+
+    it("is not marked busy when idle", () => {
+      render(<Button>Save</Button>);
+
+      expect(screen.getByRole("button")).not.toHaveAttribute("aria-busy");
     });
   });
 

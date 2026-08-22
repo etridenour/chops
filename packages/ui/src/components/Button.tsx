@@ -59,7 +59,15 @@ export const Button = forwardRef<TamaguiElement, ButtonProps>(function Button(
   return (
     <View
       ref={ref}
+      // `render` is web-only — on native this stays a plain View, so `role`
+      // is what gives it button semantics there. Redundant on web, harmless.
       render="button"
+      role="button"
+      aria-disabled={isDisabled ? true : undefined}
+      aria-busy={loading ? true : undefined}
+      // Loading swaps the label for the drum, taking the accessible name with
+      // it. Hold onto the original so the button still announces as itself.
+      aria-label={loading && typeof children === "string" ? children : undefined}
       backgroundColor={v.bg}
       paddingVertical={s.py}
       paddingHorizontal={s.px}
