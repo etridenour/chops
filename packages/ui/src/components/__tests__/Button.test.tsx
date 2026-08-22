@@ -93,9 +93,6 @@ describe("Button", () => {
     it("keeps its accessible name while loading", () => {
       render(<Button loading>Save</Button>);
 
-      // The visible label is gone (see above), so without an aria-label the
-      // button would announce as nameless right when the user needs to know
-      // which action is in flight.
       expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
     });
 
