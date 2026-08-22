@@ -28,6 +28,9 @@ export function ToggleGroupMulti<T extends string | number>({
       {options.map((option) => (
         <Button
           key={option}
+          // See ToggleGroup: always set, so an unselected option still reads
+          // as a toggle rather than a plain button.
+          aria-pressed={value.includes(option)}
           variant={value.includes(option) ? "primary" : "secondary"}
           onPress={() => handleChange(option)}
         >

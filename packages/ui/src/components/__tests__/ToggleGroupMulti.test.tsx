@@ -23,6 +23,34 @@ describe("ToggleGroupMulti", () => {
     expect(screen.getAllByRole("button")).toHaveLength(3);
   });
 
+  it("marks every selected option as pressed", () => {
+    render(
+      <ToggleGroupMulti
+        options={OPTIONS}
+        value={["snare", "bass"]}
+        onChange={onChange}
+      />,
+    );
+
+    const pressed = screen
+      .getAllByRole("button", { pressed: true })
+      .map((b) => b.textContent);
+
+    expect(pressed).toEqual(["snare", "bass"]);
+    expect(screen.getByRole("button", { pressed: false })).toHaveTextContent(
+      "tenor",
+    );
+  });
+
+  it("marks every option as not pressed when the value is empty", () => {
+    render(
+      <ToggleGroupMulti options={OPTIONS} value={[]} onChange={onChange} />,
+    );
+
+    expect(screen.queryByRole("button", { pressed: true })).toBeNull();
+    expect(screen.getAllByRole("button", { pressed: false })).toHaveLength(3);
+  });
+
   it("appends the option when an unselected option is clicked", () => {
     render(
       <ToggleGroupMulti

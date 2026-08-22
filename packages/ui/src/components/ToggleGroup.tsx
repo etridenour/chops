@@ -22,6 +22,10 @@ export function ToggleGroup<T extends string | number>({
         <Button
           width="$8"
           key={option}
+          // Always set, never omitted: `aria-pressed="false"` is what tells
+          // assistive tech this is a toggle that happens to be off. Dropping it
+          // would make an unselected option read as an ordinary button.
+          aria-pressed={value === option}
           variant={value === option ? "primary" : "secondary"}
           onPress={() =>
             onChange(allowDeselect && value === option ? undefined : option)

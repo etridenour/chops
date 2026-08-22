@@ -33,6 +33,24 @@ describe("ToggleGroup", () => {
     expect(onChange).toHaveBeenCalledWith(8);
   });
 
+  it("marks the selected option as pressed and the rest as not", () => {
+    render(<ToggleGroup options={OPTIONS} value="medium" onChange={onChange} />);
+
+    expect(screen.getByRole("button", { pressed: true })).toHaveTextContent(
+      "medium",
+    );
+    expect(screen.getAllByRole("button", { pressed: false })).toHaveLength(2);
+  });
+
+  it("marks every option as not pressed when nothing is selected", () => {
+    render(
+      <ToggleGroup options={OPTIONS} value={undefined} onChange={onChange} />,
+    );
+
+    expect(screen.queryByRole("button", { pressed: true })).toBeNull();
+    expect(screen.getAllByRole("button", { pressed: false })).toHaveLength(3);
+  });
+
   it("calls onChange with the option when an unselected option is clicked", () => {
     render(<ToggleGroup options={OPTIONS} value="easy" onChange={onChange} />);
 
