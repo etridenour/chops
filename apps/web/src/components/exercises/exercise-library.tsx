@@ -11,6 +11,7 @@ import {
   ErrorState,
   ErrorText,
   Input,
+  Label,
   ToggleGroupMulti,
   XStack,
   YStack,
@@ -136,11 +137,19 @@ export function ExerciseLibrary() {
   return (
     <>
       <XStack flexWrap="wrap" gap="$2">
-        <Input
-          value={searchText}
-          onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
-          placeholder="Search"
-        />
+        <YStack gap="$1">
+          <Label htmlFor="exercise-search">Search</Label>
+          {/* htmlFor/id ties the two together on web. `aria-label` carries the
+              same name to native, where htmlFor means nothing. The placeholder
+              is gone on purpose: it said "Search" too, so it was announced
+              twice and vanished the moment you typed. */}
+          <Input
+            id="exercise-search"
+            aria-label="Search"
+            value={searchText}
+            onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
+          />
+        </YStack>
         {tagError ? (
           <ErrorText>{tagError}</ErrorText>
         ) : (

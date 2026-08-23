@@ -66,7 +66,16 @@ vi.mock("@chops/ui", () => {
       </div>
     ),
     Body: ({ children }: any) => <p>{children}</p>,
-    ErrorText: ({ children }: any) => <p>{children}</p>,
+    // The real ErrorText is a live region as of the a11y pass — keep the mock
+    // honest so tests can't assert an announcement production doesn't make.
+    ErrorText: ({ children }: any) => (
+      <p role="alert" aria-live="assertive">
+        {children}
+      </p>
+    ),
+    Label: ({ children, htmlFor }: any) => (
+      <label htmlFor={htmlFor}>{children}</label>
+    ),
     Chip: ({ children }: any) => <span>{children}</span>,
     // Keeps the real Card's accessibility surface: it is a button.
     Card: ({ children, onPress, ...props }: any) => (
@@ -77,8 +86,14 @@ vi.mock("@chops/ui", () => {
     // The real Skeleton renders no text or role, so the mock is the only
     // thing that can give the test a handle on it.
     Skeleton: () => <div data-testid="skeleton" />,
-    Input: ({ value, onChange, placeholder }: any) => (
-      <input value={value} onChange={onChange} placeholder={placeholder} />
+    Input: ({ value, onChange, placeholder, id, ...props }: any) => (
+      <input
+        id={id}
+        aria-label={props["aria-label"]}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
     ),
     Button: ({ children, onPress, loading }: any) => (
       <button onClick={onPress} disabled={loading}>
@@ -104,10 +119,11 @@ vi.mock("@chops/ui", () => {
         ))}
       </div>
     ),
-    // Mirrors the real ErrorState: a heading, the message, an optional retry.
-    // No live region, because the real one does not have one either.
+    // Mirrors the real ErrorState: a live region wrapping a heading, the
+    // message, and an optional retry. The region covers the retry button on
+    // purpose, same as production.
     ErrorState: ({ message, onRetry, title }: any) => (
-      <div>
+      <div role="alert" aria-live="assertive">
         <h2>{title || "Something went wrong"}</h2>
         <p>{message}</p>
         {onRetry ? <button onClick={onRetry}>Try again</button> : null}
@@ -187,6 +203,32 @@ describe("ExerciseLibrary", () => {
     expect(screen.queryAllByTestId("skeleton")).toHaveLength(0);
   });
 
+  // The search box is labelled twice over, once for each platform, and the two
+  // mechanisms mask each other: `getByLabelText` passes if EITHER survives. So
+  // each one needs its own assertion or half the labelling can rot unnoticed.
+  test("ties the visible label to the search box", async () => {
+    render(<ExerciseLibrary />);
+
+    const label = screen.getByText("Search");
+    const input = screen.getByLabelText("Search");
+
+    // Clicking the label focuses the input. Only the htmlFor/id pair does that;
+    // aria-label gives a name but no click target.
+    expect(label).toHaveAttribute("for", input.id);
+    expect(input.id).not.toBe("");
+  });
+
+  test("gives the search box an aria-label for native", async () => {
+    // htmlFor/id means nothing on React Native. Without this the input has no
+    // accessible name there at all.
+    render(<ExerciseLibrary />);
+
+    expect(screen.getByLabelText("Search")).toHaveAttribute(
+      "aria-label",
+      "Search",
+    );
+  });
+
   test("fetches with the filters parsed out of the URL", async () => {
     searchParams = new URLSearchParams(
       "search=flam&tags=rolls,flams&difficulty=2,4",
@@ -232,7 +274,7 @@ describe("ExerciseLibrary", () => {
     // fireEvent, not userEvent: userEvent awaits a real macrotask internally
     // and deadlocks against fake timers. One change event per keystroke is all
     // a controlled input sees anyway.
-    const input = screen.getByRole("textbox");
+    const input = screen.getByLabelText("Search");
     for (const value of ["f", "fl", "fla", "flam"]) {
       fireEvent.change(input, { target: { value } });
     }
@@ -384,11 +426,11 @@ describe("ExerciseLibrary", () => {
     await screen.findByText("Single Stroke Roll");
 
     // The box seeds itself from the URL on mount.
-    expect(screen.getByRole("textbox")).toHaveValue("flam");
+    expect(screen.getByLabelText("Search")).toHaveValue("flam");
 
     await user.click(screen.getByRole("button", { name: "Clear" }));
 
-    expect(screen.getByRole("textbox")).toHaveValue("");
+    expect(screen.getByLabelText("Search")).toHaveValue("");
     expect(mockReplace).toHaveBeenCalledWith("/library", { scroll: false });
   });
 
