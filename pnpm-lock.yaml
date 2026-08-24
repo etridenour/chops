@@ -160,6 +160,9 @@ importers:
       '@tamagui/babel-plugin':
         specifier: ^2.0.0-rc.14
         version: 2.0.0-rc.14(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)
+      '@types/node':
+        specifier: ^22
+        version: 22.19.11
       '@types/react':
         specifier: ^19.1.0
         version: 19.2.14
