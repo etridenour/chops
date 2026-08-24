@@ -4,21 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ExerciseCard } from "../exercise-card";
 
-// ─── MOCKS ─────────────────────────────────────────────
-
-vi.mock("@chops/ui", () => ({
-  // Keeps the real Card's accessibility surface: it is a button.
-  Card: ({ children, onPress, onKeyDown }: any) => (
-    <div role="button" tabIndex={0} onClick={onPress} onKeyDown={onKeyDown}>
-      {children}
-    </div>
-  ),
-  XStack: ({ children, onPress }: any) => (
-    <div onClick={onPress}>{children}</div>
-  ),
-  Body: ({ children }: any) => <p>{children}</p>,
-  Chip: ({ children }: any) => <span data-testid="chip">{children}</span>,
-}));
+vi.mock("@chops/ui", async () => (await import("@/test/chops-ui-mock")).mocks);
 
 // The menu has its own test. This stub only needs to be a click target that
 // sits inside the card.
@@ -30,8 +16,6 @@ vi.mock("../exercise-card-menu", () => ({
     </div>
   ),
 }));
-
-// ─── FIXTURES ──────────────────────────────────────────
 
 const exercise: Exercise = {
   id: "ex1",
@@ -104,8 +88,6 @@ describe("ExerciseCard", () => {
     fireEvent.keyDown(card, { key: "Enter" });
     fireEvent.keyDown(card, { key: " " });
 
-    // The card is a div, so keyboard activation is hand-rolled rather than
-    // free the way it would be on a real button.
     expect(onEdit).toHaveBeenCalledTimes(2);
   });
 

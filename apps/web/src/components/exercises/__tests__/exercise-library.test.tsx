@@ -11,8 +11,6 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { ExerciseLibrary } from "../exercise-library";
 
-// ─── MOCKS ─────────────────────────────────────────────
-
 const { mockFetchExercises, mockFetchExerciseTags, mockDeleteExercise } =
   vi.hoisted(() => ({
     mockFetchExercises: vi.fn(),
@@ -26,9 +24,6 @@ vi.mock("@/lib/api/exercises", () => ({
   deleteExercise: mockDeleteExercise,
 }));
 
-// One stable router object for the whole file. The real useRouter returns the
-// same reference every render, and `writeUrl` has `router` in its deps — a fresh
-// object per render would rebuild it every time and restart the debounce timer.
 const { mockRouter, mockPush, mockReplace } = vi.hoisted(() => {
   const push = vi.fn();
   const replace = vi.fn();
@@ -39,7 +34,6 @@ const { mockRouter, mockPush, mockReplace } = vi.hoisted(() => {
   };
 });
 
-// The URL the component reads. Tests set this before rendering.
 let searchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
@@ -47,112 +41,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@chops/ui", () => {
-  const Popover: any = ({ children }: any) => <div>{children}</div>;
-  Popover.Trigger = ({ children }: any) => <div>{children}</div>;
-  Popover.Content = ({ children }: any) => <div>{children}</div>;
-  Popover.Arrow = () => null;
-
-  return {
-    YStack: ({ children, ...props }: any) => (
-      <div {...filterProps(props)}>{children}</div>
-    ),
-    // onPress is wired up because ExerciseCard uses an XStack purely to
-    // stopPropagation around the menu. Drop it and menu clicks bubble to the
-    // card and fire onEdit, which the real app never does.
-    XStack: ({ children, onPress, ...props }: any) => (
-      <div onClick={onPress} {...filterProps(props)}>
-        {children}
-      </div>
-    ),
-    Body: ({ children }: any) => <p>{children}</p>,
-    // The real ErrorText is a live region as of the a11y pass — keep the mock
-    // honest so tests can't assert an announcement production doesn't make.
-    ErrorText: ({ children }: any) => (
-      <p role="alert" aria-live="assertive">
-        {children}
-      </p>
-    ),
-    Label: ({ children, htmlFor }: any) => (
-      <label htmlFor={htmlFor}>{children}</label>
-    ),
-    Chip: ({ children }: any) => <span>{children}</span>,
-    // Keeps the real Card's accessibility surface: it is a button.
-    Card: ({ children, onPress, ...props }: any) => (
-      <div onClick={onPress} role="button" tabIndex={0} {...filterProps(props)}>
-        {children}
-      </div>
-    ),
-    // The real Skeleton renders no text or role, so the mock is the only
-    // thing that can give the test a handle on it.
-    Skeleton: () => <div data-testid="skeleton" />,
-    Input: ({ value, onChange, placeholder, id, ...props }: any) => (
-      <input
-        id={id}
-        aria-label={props["aria-label"]}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-      />
-    ),
-    Button: ({ children, onPress, loading }: any) => (
-      <button onClick={onPress} disabled={loading}>
-        {children}
-      </button>
-    ),
-    ToggleGroupMulti: ({ options, value, onChange }: any) => (
-      <div>
-        {options.map((opt: any) => (
-          <button
-            key={opt}
-            aria-pressed={value.includes(opt)}
-            onClick={() =>
-              onChange(
-                value.includes(opt)
-                  ? value.filter((v: any) => v !== opt)
-                  : [...value, opt],
-              )
-            }
-          >
-            {String(opt)}
-          </button>
-        ))}
-      </div>
-    ),
-    // Mirrors the real ErrorState: a live region wrapping a heading, the
-    // message, and an optional retry. The region covers the retry button on
-    // purpose, same as production.
-    ErrorState: ({ message, onRetry, title }: any) => (
-      <div role="alert" aria-live="assertive">
-        <h2>{title || "Something went wrong"}</h2>
-        <p>{message}</p>
-        {onRetry ? <button onClick={onRetry}>Try again</button> : null}
-      </div>
-    ),
-    ConfirmDialog: ({ open, title, confirmLabel, onConfirm }: any) =>
-      open ? (
-        <div role="alertdialog">
-          <h2>{title}</h2>
-          <button onClick={onConfirm}>{confirmLabel || "Confirm"}</button>
-        </div>
-      ) : null,
-    MoreVertical: () => <span>more-icon</span>,
-    Popover,
-  };
-});
-
-// Helper: filter out non-DOM props that React would warn about
-function filterProps(props: Record<string, any>) {
-  const domSafe: Record<string, any> = {};
-  for (const [key, val] of Object.entries(props)) {
-    if (key.startsWith("$") || key.startsWith("on") || !/^[a-z-]+$/.test(key))
-      continue;
-    domSafe[key] = val;
-  }
-  return domSafe;
-}
-
-// ─── FIXTURES ──────────────────────────────────────────
+vi.mock("@chops/ui", async () => (await import("@/test/chops-ui-mock")).mocks);
 
 const exercises: Exercise[] = [
   {
@@ -184,8 +73,6 @@ beforeEach(() => {
   mockFetchExerciseTags.mockResolvedValue(["rolls", "flams"]);
 });
 
-// Only the debounce test installs fake timers. Restoring here keeps them from
-// leaking into whatever runs next.
 afterEach(() => {
   vi.useRealTimers();
 });
@@ -203,24 +90,17 @@ describe("ExerciseLibrary", () => {
     expect(screen.queryAllByTestId("skeleton")).toHaveLength(0);
   });
 
-  // The search box is labelled twice over, once for each platform, and the two
-  // mechanisms mask each other: `getByLabelText` passes if EITHER survives. So
-  // each one needs its own assertion or half the labelling can rot unnoticed.
   test("ties the visible label to the search box", async () => {
     render(<ExerciseLibrary />);
 
     const label = screen.getByText("Search");
     const input = screen.getByLabelText("Search");
 
-    // Clicking the label focuses the input. Only the htmlFor/id pair does that;
-    // aria-label gives a name but no click target.
     expect(label).toHaveAttribute("for", input.id);
     expect(input.id).not.toBe("");
   });
 
   test("gives the search box an aria-label for native", async () => {
-    // htmlFor/id means nothing on React Native. Without this the input has no
-    // accessible name there at all.
     render(<ExerciseLibrary />);
 
     expect(screen.getByLabelText("Search")).toHaveAttribute(
@@ -240,7 +120,6 @@ describe("ExerciseLibrary", () => {
     expect(await screen.findByText("Flam Accent")).toBeInTheDocument();
     expect(screen.queryByText("Single Stroke Roll")).not.toBeInTheDocument();
 
-    // Strings in the URL, typed values out of the parser.
     expect(mockFetchExercises).toHaveBeenCalledTimes(1);
     expect(mockFetchExercises).toHaveBeenCalledWith({
       page: 1,
@@ -267,13 +146,8 @@ describe("ExerciseLibrary", () => {
     render(<ExerciseLibrary />);
     expect(await screen.findByText("Single Stroke Roll")).toBeInTheDocument();
 
-    // Fake timers go on after the initial load, so `findByText` above can poll
-    // on a real clock.
     vi.useFakeTimers();
 
-    // fireEvent, not userEvent: userEvent awaits a real macrotask internally
-    // and deadlocks against fake timers. One change event per keystroke is all
-    // a controlled input sees anyway.
     const input = screen.getByLabelText("Search");
     for (const value of ["f", "fl", "fla", "flam"]) {
       fireEvent.change(input, { target: { value } });
@@ -298,7 +172,6 @@ describe("ExerciseLibrary", () => {
     const user = userEvent.setup();
     render(<ExerciseLibrary />);
 
-    // Tag buttons only exist once fetchExerciseTags resolves.
     await user.click(await screen.findByRole("button", { name: "rolls" }));
 
     expect(mockReplace).toHaveBeenCalledWith("/library?tags=rolls", {
@@ -319,9 +192,6 @@ describe("ExerciseLibrary", () => {
       "true",
     );
 
-    // Writing: whatever selection comes back is re-joined into the URL.
-    // The add/remove logic itself belongs to the real ToggleGroupMulti, which
-    // is mocked here — it gets its own tests when packages/ui has a setup.
     await user.click(rolls);
 
     expect(mockReplace).toHaveBeenCalledWith("/library?tags=flams", {
@@ -337,22 +207,18 @@ describe("ExerciseLibrary", () => {
 
     await user.click(screen.getByRole("button", { name: "2" }));
 
-    // Filtering while on page 3 would otherwise land on an empty page.
     expect(mockReplace).toHaveBeenCalledWith("/library?difficulty=2", {
       scroll: false,
     });
   });
 
   test("a failed first load offers a retry that recovers", async () => {
-    // Once: the first call rejects, the second falls through to the resolved
-    // value set in beforeEach, so retry has something to succeed with.
     mockFetchExercises.mockRejectedValueOnce(new Error("Network is down"));
     const user = userEvent.setup();
 
     render(<ExerciseLibrary />);
 
     expect(await screen.findByText("Network is down")).toBeInTheDocument();
-    // Nothing has ever loaded, so there is no list to fall back on.
     expect(screen.queryByText("Single Stroke Roll")).not.toBeInTheDocument();
     expect(screen.queryAllByTestId("skeleton")).toHaveLength(0);
 
@@ -367,14 +233,11 @@ describe("ExerciseLibrary", () => {
     const { rerender } = render(<ExerciseLibrary />);
     expect(await screen.findByText("Single Stroke Roll")).toBeInTheDocument();
 
-    // What a filter click does in the app: the URL changes, so the effect
-    // re-runs. Here `replace` is a spy, so the test drives the URL directly.
     mockFetchExercises.mockRejectedValueOnce(new Error("Network is down"));
     searchParams = new URLSearchParams("tags=rolls");
     rerender(<ExerciseLibrary />);
 
     expect(await screen.findByText("Network is down")).toBeInTheDocument();
-    // The point of this branch: the list survives the failure.
     expect(screen.getByText("Single Stroke Roll")).toBeInTheDocument();
     expect(screen.getByText("Flam Accent")).toBeInTheDocument();
     expect(screen.queryAllByTestId("skeleton")).toHaveLength(0);
@@ -382,8 +245,6 @@ describe("ExerciseLibrary", () => {
   });
 
   test("ignores a stale response that lands after a newer one", async () => {
-    // Each call gets a promise the test holds the resolver for, so the test
-    // decides the order they settle in.
     const resolvers: Array<(value: unknown) => void> = [];
     mockFetchExercises.mockImplementation(
       () => new Promise((resolve) => resolvers.push(resolve)),
@@ -395,7 +256,6 @@ describe("ExerciseLibrary", () => {
     rerender(<ExerciseLibrary />);
     expect(mockFetchExercises).toHaveBeenCalledTimes(2);
 
-    // Newer request first, then the stale one it replaced.
     await act(async () => {
       resolvers[1](page([exercises[1]]));
     });
@@ -425,7 +285,6 @@ describe("ExerciseLibrary", () => {
     render(<ExerciseLibrary />);
     await screen.findByText("Single Stroke Roll");
 
-    // The box seeds itself from the URL on mount.
     expect(screen.getByLabelText("Search")).toHaveValue("flam");
 
     await user.click(screen.getByRole("button", { name: "Clear" }));
@@ -452,10 +311,7 @@ describe("ExerciseLibrary", () => {
     );
     expect(mockDeleteExercise).toHaveBeenCalledWith("ex1");
     expect(screen.getByText("Flam Accent")).toBeInTheDocument();
-    // Deleting can free up a tag, so the tag list is reloaded.
     expect(mockFetchExerciseTags).toHaveBeenCalledTimes(2);
-    // The menu sits inside the card, which is itself a button. If the click
-    // bubbled, this would have navigated to the edit page instead.
     expect(mockPush).not.toHaveBeenCalled();
   });
 });

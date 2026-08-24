@@ -6,80 +6,10 @@ import { ExerciseCardMenu } from "../exercise-card-menu";
 const onEdit = vi.fn();
 const onDelete = vi.fn();
 
-vi.mock("@chops/ui", () => {
-  const Popover: any = ({ children }: any) => <div>{children}</div>;
-  Popover.Trigger = ({ children }: any) => <div>{children}</div>;
-  Popover.Content = ({ children }: any) => <div>{children}</div>;
-  Popover.Arrow = () => null;
-
-  return {
-    YStack: ({ children, ...props }: any) => (
-      <div {...filterProps(props)}>{children}</div>
-    ),
-    Button: ({ children, onPress, loading }: any) => (
-      <button
-        onClick={onPress}
-        disabled={loading}
-        aria-busy={loading || undefined}
-      >
-        {children}
-      </button>
-    ),
-    MoreVertical: () => <span>more-icon</span>,
-    ConfirmDialog: ({
-      open,
-      onOpenChange,
-      title,
-      description,
-      confirmLabel,
-      cancelLabel,
-      onConfirm,
-    }: any) =>
-      open ? (
-        <div role="alertdialog">
-          <h2>{title}</h2>
-          <p>{description}</p>
-          <button onClick={() => onOpenChange?.(false)}>
-            {cancelLabel || "Cancel"}
-          </button>
-          <button onClick={onConfirm}>{confirmLabel || "Confirm"}</button>
-        </div>
-      ) : null,
-
-    Popover,
-  };
-});
-
-// Helper: filter out non-DOM props that React would warn about
-function filterProps(props: Record<string, any>) {
-  const domSafe: Record<string, any> = {};
-  for (const [key, val] of Object.entries(props)) {
-    // Skip Tamagui-specific props that aren't valid HTML attributes
-    if (
-      key.startsWith("$") ||
-      [
-        "inputMode",
-        "autoCapitalize",
-        "paddingRight",
-        "fullWidth",
-        "variant",
-        "gap",
-        "flex",
-        "justifyContent",
-        "marginHorizontal",
-        "marginBottom",
-        "marginTop",
-        "textAlign",
-        "maxWidth",
-        "position",
-        "alignItems",
-      ].includes(key)
-    )
-      continue;
-    domSafe[key] = val;
-  }
-  return domSafe;
-}
+vi.mock(
+  "@chops/ui",
+  async () => (await import("@/test/chops-ui-mock")).mocks,
+);
 
 beforeEach(() => {
   onEdit.mockReset();

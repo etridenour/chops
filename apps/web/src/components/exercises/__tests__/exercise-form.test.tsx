@@ -16,87 +16,10 @@ vi.mock("@/lib/api/exercises", () => ({
 const onSuccess = vi.fn();
 const onCancel = vi.fn();
 
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children, ...props }: any) => (
-    <div {...filterProps(props)}>{children}</div>
-  ),
-  XStack: ({ children, ...props }: any) => (
-    <div {...filterProps(props)}>{children}</div>
-  ),
-  Separator: ({ children, ...props }: any) => (
-    <div {...filterProps(props)}>{children}</div>
-  ),
-  ToggleGroup: ({ options, value, onChange, allowDeselect }: any) => (
-    <div>
-      {options.map((opt: any) => (
-        <button
-          key={opt}
-          aria-pressed={value === opt}
-          onClick={() =>
-            onChange(allowDeselect && value === opt ? undefined : opt)
-          }
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  ),
-
-  Input: ({ id, value, onChange, error, ...props }: any) => (
-    <input
-      id={id}
-      value={value}
-      onChange={onChange}
-      aria-invalid={error || undefined}
-    />
-  ),
-  H1: ({ children }: any) => <h1>{children}</h1>,
-  Button: ({ children, onPress, loading }: any) => (
-    <button
-      onClick={onPress}
-      disabled={loading}
-      aria-busy={loading || undefined}
-    >
-      {children}
-    </button>
-  ),
-  Label: ({ children, htmlFor }: any) => (
-    <label htmlFor={htmlFor}>{children}</label>
-  ),
-  ErrorText: ({ children }: any) => <p>{children}</p>,
-  Body: ({ children }: any) => <p>{children}</p>,
-}));
-
-// Helper: filter out non-DOM props that React would warn about
-function filterProps(props: Record<string, any>) {
-  const domSafe: Record<string, any> = {};
-  for (const [key, val] of Object.entries(props)) {
-    // Skip Tamagui-specific props that aren't valid HTML attributes
-    if (
-      key.startsWith("$") ||
-      [
-        "inputMode",
-        "autoCapitalize",
-        "paddingRight",
-        "fullWidth",
-        "variant",
-        "gap",
-        "flex",
-        "justifyContent",
-        "marginHorizontal",
-        "marginBottom",
-        "marginTop",
-        "textAlign",
-        "maxWidth",
-        "position",
-        "alignItems",
-      ].includes(key)
-    )
-      continue;
-    domSafe[key] = val;
-  }
-  return domSafe;
-}
+vi.mock(
+  "@chops/ui",
+  async () => (await import("@/test/chops-ui-mock")).mocks,
+);
 
 const mockExercise = {
   id: "exId",

@@ -37,74 +37,10 @@ vi.mock("@/lib/api-client", () => ({
   setAccessToken: vi.fn(),
 }));
 
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children, ...props }: any) => (
-    <div {...filterProps(props)}>{children}</div>
-  ),
-  Input: ({ id, value, onChange, error, ...props }: any) => (
-    <input
-      id={id}
-      value={value}
-      onChange={onChange}
-      aria-invalid={error || undefined}
-      {...filterProps(props)}
-    />
-  ),
-  H1: ({ children }: any) => <h1>{children}</h1>,
-  Button: ({ children, onPress, loading, ...props }: any) => (
-    <button
-      onClick={onPress}
-      disabled={loading}
-      aria-busy={loading || undefined}
-    >
-      {children}
-    </button>
-  ),
-  Label: ({ children, htmlFor }: any) => (
-    <label htmlFor={htmlFor}>{children}</label>
-  ),
-  ErrorText: ({ children, ...props }: any) => (
-    <span role="alert">{children}</span>
-  ),
-  Body: ({ children }: any) => <p>{children}</p>,
-  LinkText: ({ children }: any) => <span>{children}</span>,
-  Eye: () => <span>eye-icon</span>,
-  EyeOff: () => <span>eyeoff-icon</span>,
-  XStack: ({ children, ...props }: any) => (
-    <div {...filterProps(props)}>{children}</div>
-  ),
-  Spinner: () => <span>loading...</span>,
-}));
-
-function filterProps(props: Record<string, any>) {
-  const domSafe: Record<string, any> = {};
-  for (const [key, val] of Object.entries(props)) {
-    // Skip Tamagui-specific props that aren't valid HTML attributes
-    if (
-      key.startsWith("$") ||
-      [
-        "inputMode",
-        "autoCapitalize",
-        "paddingRight",
-        "fullWidth",
-        "variant",
-        "gap",
-        "flex",
-        "justifyContent",
-        "marginHorizontal",
-        "marginBottom",
-        "marginTop",
-        "textAlign",
-        "maxWidth",
-        "position",
-        "alignItems",
-      ].includes(key)
-    )
-      continue;
-    domSafe[key] = val;
-  }
-  return domSafe;
-}
+vi.mock(
+  "@chops/ui",
+  async () => (await import("@/test/chops-ui-mock")).mocks,
+);
 
 beforeEach(() => {
   mockFetch.mockReset();
@@ -295,9 +231,11 @@ describe("VerifyPage", () => {
       screen.getByText("Create Account", { selector: "button" }),
     );
 
+    // See signup: production reports disabled via aria-disabled, not the DOM
+    // attribute, so the button stays in the tab order.
     expect(
       screen.getByText("Create Account", { selector: "button" }),
-    ).toBeDisabled();
+    ).toHaveAttribute("aria-disabled", "true");
 
     resolveRequest!({ ok: true, json: () => Promise.resolve({}) });
   });

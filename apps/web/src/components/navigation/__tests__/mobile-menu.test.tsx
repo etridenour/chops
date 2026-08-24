@@ -44,27 +44,16 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children }: any) => (
-    <div data-testid="nav-items-container">{children}</div>
-  ),
-  XStack: ({ children }: any) => <div>{children}</div>,
-  Home: () => <svg data-testid="nav-icon" />,
-  Drum: () => <svg data-testid="nav-icon" />,
-  Body: ({ children }: any) => <span>{children}</span>,
-  Button: ({ children, onPress, loading, ...props }: any) => (
-    <button
-      onClick={onPress}
-      disabled={loading}
-      aria-busy={loading || undefined}
-    >
-      {children}
-    </button>
-  ),
-  Separator: () => <hr />,
-  LogOut: () => <svg data-testid="logout-icon" />,
-  Sheet: MockSheet,
-}));
+vi.mock("@chops/ui", async () => {
+  const { mocks } = await import("@/test/chops-ui-mock");
+  return {
+    ...mocks,
+    YStack: ({ children }: any) => (
+      <div data-testid="nav-items-container">{children}</div>
+    ),
+    Sheet: MockSheet,
+  };
+});
 
 beforeEach(() => {
   mockLogout.mockReset();
@@ -80,11 +69,9 @@ describe("MobileMenu component", () => {
 
     expect(screen.getByText("Home")).toBeInTheDocument();
     expect(
-      screen.getByText("user@test.com", { selector: "span" }),
+      screen.getByText("user@test.com", { selector: "p" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText("Log Out", { selector: "span" }),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Log Out", { selector: "p" })).toBeInTheDocument();
   });
 
   test("clicking a nav link calls onOpenChange(false)", async () => {

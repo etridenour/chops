@@ -7,14 +7,20 @@ import { ExerciseList } from "../exercise-list";
 // ─── MOCKS ─────────────────────────────────────────────
 
 // The dim is a style, so the stand-in has to render it as one.
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children, opacity, pointerEvents }: any) => (
-    <div data-testid="list" style={{ opacity, pointerEvents }}>
-      {children}
-    </div>
-  ),
-  Body: ({ children }: any) => <p>{children}</p>,
-}));
+// YStack is overridden because the dimming behaviour is what's under test, and
+// the real list container exposes it only as inline style. There is no role,
+// label, or aria-busy to query — that gap is tracked in BACKLOG.
+vi.mock("@chops/ui", async () => {
+  const { mocks } = await import("@/test/chops-ui-mock");
+  return {
+    ...mocks,
+    YStack: ({ children, opacity, pointerEvents }: any) => (
+      <div data-testid="list" style={{ opacity, pointerEvents }}>
+        {children}
+      </div>
+    ),
+  };
+});
 
 // ExerciseCard has its own test. Here it only needs to prove it was rendered
 // with the right exercise and that its callbacks are wired.

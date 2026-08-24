@@ -2,10 +2,10 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 import { AppShell } from "../app-shell";
 
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children }: any) => <div>{children}</div>,
-  XStack: ({ children }: any) => <div>{children}</div>,
-}));
+vi.mock(
+  "@chops/ui",
+  async () => (await import("@/test/chops-ui-mock")).mocks,
+);
 
 vi.mock("../sidebar", () => ({
   Sidebar: (): any => <div>Sidebar</div>,

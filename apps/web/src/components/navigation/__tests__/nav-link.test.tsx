@@ -29,14 +29,19 @@ vi.mock("next/navigation", () => ({
   usePathname: mockUsePathname,
 }));
 
-vi.mock("@chops/ui", () => ({
-  XStack: ({ children, backgroundColor }: any) => (
-    <div data-testid="nav-link-container" data-background={backgroundColor}>
-      {children}
-    </div>
-  ),
-  Body: ({ children }: any) => <span>{children}</span>,
-}));
+// XStack is overridden here because the active-state styling is the thing under
+// test, and the real component exposes it only as a background colour.
+vi.mock("@chops/ui", async () => {
+  const { mocks } = await import("@/test/chops-ui-mock");
+  return {
+    ...mocks,
+    XStack: ({ children, backgroundColor }: any) => (
+      <div data-testid="nav-link-container" data-background={backgroundColor}>
+        {children}
+      </div>
+    ),
+  };
+});
 
 beforeEach(() => {
   mockUsePathname.mockReset();

@@ -3,29 +3,17 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import Exercises from "../page";
 
-// ─── MOCKS ─────────────────────────────────────────────
-
 const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-// The library does its own fetching and has its own test file. The page is
-// just the frame around it.
 vi.mock("@/components/exercises/exercise-library", () => ({
   ExerciseLibrary: () => <div>exercise library</div>,
 }));
 
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children }: any) => <div>{children}</div>,
-  XStack: ({ children }: any) => <div>{children}</div>,
-  H1: ({ children }: any) => <h1>{children}</h1>,
-  Button: ({ children, onPress }: any) => (
-    <button onClick={onPress}>{children}</button>
-  ),
-  Skeleton: () => <div data-testid="skeleton" />,
-}));
+vi.mock("@chops/ui", async () => (await import("@/test/chops-ui-mock")).mocks);
 
 beforeEach(() => {
   vi.clearAllMocks();
