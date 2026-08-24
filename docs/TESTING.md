@@ -88,6 +88,34 @@ The same component is treated differently depending on which package the test li
 
 Rule of thumb: a package tests the logic it owns, and mocks what it imports from below.
 
+### The shared `@chops/ui` stand-ins
+
+`apps/web/src/test/chops-ui-mock.tsx` holds one set of DOM stand-ins for the whole web test suite. Every web test file that renders a `@chops/ui` component uses it. Before it existed, seventeen test files each carried their own copy and the copies drifted apart; when production gained live regions in the Aug 2026 a11y pass, six files had to be corrected by hand.
+
+Use it as-is:
+
+```ts
+vi.mock("@chops/ui", async () => (await import("@/test/chops-ui-mock")).mocks);
+```
+
+Override one component for a single file:
+
+```ts
+vi.mock("@chops/ui", async () => {
+  const { mocks } = await import("@/test/chops-ui-mock");
+  return { ...mocks, Skeleton: () => <div data-testid="row" /> };
+});
+```
+
+The factory has to be `async`. `vi.mock` is hoisted above the imports, so a top-level import of the mock module would not exist yet when the factory runs.
+
+**Rules for editing the stand-ins:**
+
+1. **A stand-in must not claim an accessibility surface production lacks.** A test that passes against an invented role is worse than no test.
+2. **Where a stand-in deliberately differs from production, say so in a comment above it,** and say what production actually does. This is the one case where a comment in that file earns its place, because no test can catch the mock lying about the real component.
+3. **Prefer fixing production over enriching the mock.** Several stand-ins carry a `data-testid` only because the real component exposes no queryable handle. `Chip` and `Skeleton` are the current examples, and the icons re-exported from lucide render an `<svg>` with no accessible name. Each of those is a gap in the component, not a feature of the mock.
+4. **`filterProps` is an allowlist, not a pattern.** It drops every prop not named in `DOM_ATTRS` (plus anything `aria-*` or `data-*`). An earlier version kept every lowercase key, which let Tamagui's lowercase style props (`gap`, `opacity`, `flex`, `position`) through onto the element, where they are not valid HTML attributes. It also drops every `on*` handler, so a stand-in cannot invent click behavior the real component lacks. Wire handlers explicitly on the components that really are interactive.
+
 ### Why the `packages/ui` config is bigger
 
 Rendering real Tamagui in a fake browser needs extra plumbing that the web app's tests never needed:
