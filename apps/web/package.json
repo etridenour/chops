@@ -6,8 +6,9 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "tsc --noEmit",
-    "test": "vitest run"
+    "lint": "eslint .",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@chops/shared": "workspace:*",
@@ -25,9 +26,11 @@
     "tamagui": "^2.0.0-rc.14"
   },
   "devDependencies": {
+    "@chops/eslint-config": "workspace:*",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "eslint": "^9",
     "typescript": "^5"
   }
 }

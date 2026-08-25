@@ -1,13 +1,16 @@
 # Chops — Drums & Percussion Practice App
 
-Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `packages/ui` (Tamagui), `packages/shared` (types/validators)
+Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `packages/ui` (Tamagui), `packages/shared` (types/validators), `packages/eslint-config` (shared lint presets)
 
 ## Dev Commands
 
 - `pnpm dev` — start all apps simultaneously
 - `pnpm dev:web` / `pnpm dev:api` / `pnpm dev:mobile` — start individually
 - `pnpm build` — build all packages and apps
-- `pnpm lint` — lint all packages and apps
+- `pnpm lint` — ESLint across all packages and apps
+- `pnpm typecheck` — `tsc --noEmit` across all packages and apps
+- `pnpm check` — both of the above; the pre-commit command
+- Turborepo stops at the first failing package — add `--continue` to see every failure
 - Database (run from `apps/api`): `pnpm db:push`, `pnpm db:migrate`, `pnpm db:generate`, `pnpm db:studio`
 
 ## Coding Standards
@@ -50,11 +53,16 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 - Web: refresh token in httpOnly cookie. Mobile: refresh token in SecureStore + response body.
 - **pnpm workspaces** + **Turborepo** for monorepo orchestration
 - **@tamagui/animations-css** driver configured in tamagui.config.ts (named animations: fast, medium, slow, bouncy)
+- **REST for the whole API** — GraphQL was planned and cut (Aug 2026). Services stay transport-agnostic (plain data in, no `req`/`res`) so a second transport would be additive
+- **ESLint** via `packages/eslint-config`, three flat-config presets: `base` (shared, api), `react` (ui, mobile), `next` (web). Each package's `eslint.config.mjs` is a three-line re-export
 
 ## Key Gotchas
 
 - React 19 enforced via pnpm overrides in root `package.json`
 - Tamagui is on RC (v2.0.0-rc.14) — check Tamagui docs for RC-specific behavior
+- ESLint pinned to **9**, not 10: `eslint-plugin-jsx-a11y` and `eslint-config-next@15` both cap there. npm reports 9 as unsupported; lifts with the Next 16 upgrade
+- `next.mjs` re-asserts `tseslint.parser` **after** `next/core-web-vitals` — Next 15 substitutes its own parser, which crashes `@typescript-eslint/no-unused-vars`. Do not remove until Next 16
+- `eslint-plugin-jsx-a11y` only sees real DOM elements, so it is near-blind inside Tamagui components. It earns its keep in `apps/web`, not `packages/ui`
 - Shared packages (`@chops/shared`, `@chops/ui`) must be listed in `transpilePackages` in `apps/web/next.config.ts`
 - `react-native` is aliased to `react-native-web` in `next.config.ts` for Turbopack compatibility
 
