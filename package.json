@@ -5,6 +5,8 @@
     "dev": "pnpm dev:kill && turbo dev --filter=@chops/web --filter=@chops/api --filter=@chops/shared & cd apps/mobile && pnpm dev",
     "build": "turbo build",
     "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "check": "turbo lint typecheck",
     "dev:web": "turbo dev --filter=@chops/web",
     "dev:api": "turbo dev --filter=@chops/api",
     "dev:mobile": "turbo dev --filter=@chops/mobile",
