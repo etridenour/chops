@@ -28,6 +28,7 @@ pnpm test
 # Run tests for a specific package
 pnpm --filter @chops/shared test
 pnpm --filter @chops/web test
+pnpm --filter @chops/ui test
 
 # Run tests in watch mode (re-runs when files change — great during development)
 cd packages/shared && npx vitest
@@ -65,6 +66,64 @@ apps/web/
 ```
 
 **Naming convention:** `{filename}.test.ts` (or `.test.tsx` for components). Vitest automatically finds files matching `**/*.test.{ts,tsx}`.
+
+Exception: `packages/ui` keeps its test helpers in `src/test/` (setup file, render helper, smoke test), and component tests will sit in `__tests__/` folders like everywhere else.
+
+## How the Setup Fits Together
+
+Each package that has tests owns three pieces:
+
+1. **A `test` script** in its `package.json` (`vitest run`). The root `pnpm test` runs them all through Turborepo.
+2. **A `vitest.config.ts`** declaring the environment (happy-dom), globals, and a setup file.
+3. **A setup file** (`src/test/setup.ts`) that loads jest-dom's matchers.
+
+The testing devDependencies (vitest, happy-dom, testing-library) live once in the **root** `package.json`, shared by the whole workspace. Individual packages don't re-declare them.
+
+### The mock boundary
+
+The same component is treated differently depending on which package the test lives in:
+
+- **`apps/web` tests mock `@chops/ui`** with plain DOM stand-ins. Those tests care about app logic (fetching, filtering, navigation), and real Tamagui rendering would add noise.
+- **`packages/ui` tests render real Tamagui.** The components ARE Tamagui; mocking it would leave nothing to test. This is where component logic (variants, select/deselect behavior) gets its coverage.
+
+Rule of thumb: a package tests the logic it owns, and mocks what it imports from below.
+
+### The shared `@chops/ui` stand-ins
+
+`apps/web/src/test/chops-ui-mock.tsx` holds one set of DOM stand-ins for the whole web test suite. Every web test file that renders a `@chops/ui` component uses it. Before it existed, seventeen test files each carried their own copy and the copies drifted apart; when production gained live regions in the Aug 2026 a11y pass, six files had to be corrected by hand.
+
+Use it as-is:
+
+```ts
+vi.mock("@chops/ui", async () => (await import("@/test/chops-ui-mock")).mocks);
+```
+
+Override one component for a single file:
+
+```ts
+vi.mock("@chops/ui", async () => {
+  const { mocks } = await import("@/test/chops-ui-mock");
+  return { ...mocks, Skeleton: () => <div data-testid="row" /> };
+});
+```
+
+The factory has to be `async`. `vi.mock` is hoisted above the imports, so a top-level import of the mock module would not exist yet when the factory runs.
+
+**Rules for editing the stand-ins:**
+
+1. **A stand-in must not claim an accessibility surface production lacks.** A test that passes against an invented role is worse than no test.
+2. **Where a stand-in deliberately differs from production, say so in a comment above it,** and say what production actually does. This is the one case where a comment in that file earns its place, because no test can catch the mock lying about the real component.
+3. **Prefer fixing production over enriching the mock.** Several stand-ins carry a `data-testid` only because the real component exposes no queryable handle. `Chip` and `Skeleton` are the current examples, and the icons re-exported from lucide render an `<svg>` with no accessible name. Each of those is a gap in the component, not a feature of the mock.
+4. **`filterProps` is an allowlist, not a pattern.** It drops every prop not named in `DOM_ATTRS` (plus anything `aria-*` or `data-*`). An earlier version kept every lowercase key, which let Tamagui's lowercase style props (`gap`, `opacity`, `flex`, `position`) through onto the element, where they are not valid HTML attributes. It also drops every `on*` handler, so a stand-in cannot invent click behavior the real component lacks. Wire handlers explicitly on the components that really are interactive.
+
+### Why the `packages/ui` config is bigger
+
+Rendering real Tamagui in a fake browser needs extra plumbing that the web app's tests never needed:
+
+- **Provider wrapper.** Tamagui components need `TamaguiProvider` with the design-system config, or no tokens/themes resolve. The helper in `packages/ui/src/test/render.tsx` bakes this in — import `render` and `screen` from there, not from `@testing-library/react`.
+- **react-native aliases.** Tamagui imports `react-native`, which ships Flow-typed source that vitest can't parse. The config aliases it to `react-native-web` (and `react-native-svg` to `react-native-svg-web`), mirroring what `apps/web/next.config.ts` does for the real site.
+- **Inlined dependencies.** Vitest normally runs node_modules packages natively through Node, where those aliases don't apply. `server.deps.inline` forces the icon packages through vitest's transformer so their internal react-native imports get rewritten too.
+- **Two tsconfigs.** `tsconfig.json` (used by `lint` and the IDE) knows about vitest globals and typechecks tests. `tsconfig.build.json` (used by `build`) excludes tests so compiled copies never land in `dist/` — vitest once picked up a stale compiled test there and ran it as a second file.
 
 ## Anatomy of a Test File
 
@@ -327,7 +386,7 @@ await screen.findByText("Loaded");  // retries until found or timeout
 - Both success and failure paths for async operations
 
 ### Don't test:
-- Third-party library internals (Tamagui renders correctly, React useState works)
+- Third-party library internals (Tamagui renders correctly, React useState works). Note: `packages/ui` tests *render* real Tamagui, but they still assert our own component logic (variants, callbacks, select behavior), not Tamagui's.
 - CSS/styling details
 - Implementation details (internal state values, private methods)
 - That Next.js `<Link>` navigates — that's Next.js's job

@@ -27,6 +27,7 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 ## Workflow Rules
 
 - Never auto-commit unless explicitly asked.
+- Proactively flag commit points: pause and suggest committing when a self-contained unit is complete, builds/passes, and tells one clear story (if the subject needs an "and", it's probably two commits). Keep unrelated concerns in separate commits (e.g. a build fix vs. feature work).
 - Explain planned changes before editing files.
 - Prefer editing existing files over creating new ones.
 - Keep changes minimal — no drive-by refactors or cleanups.
@@ -60,6 +61,7 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 ## Documentation
 
 - [Getting Started](docs/GETTING-STARTED.md) — Setup, prerequisites, running the apps
+- [Testing Guide](docs/TESTING.md) — Stack, per-package setup, mock boundary, how to write tests
 - [Theming Guide](docs/THEMING.md) — Tamagui tokens, themes, skins, components
 - [Turborepo Guide](docs/TURBOREPO.md) — Monorepo build system
 - [Deployment](docs/DEPLOYMENT.md) — Deploying web, API, and mobile to production

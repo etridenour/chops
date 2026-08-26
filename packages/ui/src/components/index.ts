@@ -1,6 +1,6 @@
-export { Button } from './Button'
-export type { ButtonProps } from './Button'
-export { Input } from './Input'
-export type { InputProps } from './Input'
-export { H1, H2, Body, Label, ErrorText, LinkText } from './Text'
-export { SkinSelector } from './SkinSelector'
+export { Button } from "./Button";
+export type { ButtonProps } from "./Button";
+export { Input } from "./Input";
+export type { InputProps } from "./Input";
+export { H1, H2, Body, Label, ErrorText, LinkText } from "./Text";
+export { SkinSelector } from "./SkinSelector";

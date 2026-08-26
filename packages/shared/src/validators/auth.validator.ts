@@ -12,11 +12,7 @@ import type {
   ForgotPasswordRequest,
   ResetPasswordRequest,
 } from "../types/auth";
-
-function extractErrors(result: { success: boolean; error?: any }): string[] {
-  if (result.success) return [];
-  return result.error.issues.map((issue: any) => issue.message);
-}
+import { extractErrors } from "./utils";
 
 export function validateStartSignup(input: StartSignupRequest): string[] {
   return extractErrors(startSignupSchema.safeParse(input));

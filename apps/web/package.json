@@ -6,17 +6,20 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "@chops/shared": "workspace:*",
     "@chops/ui": "workspace:*",
+    "@hookform/resolvers": "^5.4.0",
     "@tamagui/core": "^2.0.0-rc.14",
+    "@tamagui/helpers-icon": "^2.0.0-rc.14",
     "@tamagui/next-theme": "^2.0.0-rc.14",
     "next": "^15",
     "react": "^19",
     "react-dom": "^19",
+    "react-hook-form": "^7.80.0",
     "react-native-svg-web": "^1.0.9",
     "react-native-web": "^0.20.0",
     "tamagui": "^2.0.0-rc.14"

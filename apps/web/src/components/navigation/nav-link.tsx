@@ -1,8 +1,3 @@
-// TS errors in this file are Tamagui RC (v2.0.0-rc.14) type issues:
-// - `tag` prop, `$accentBackground` token, and `@tamagui/helpers-icon` types
-//   are not recognized by TS but work correctly at runtime.
-// These will resolve when Tamagui releases stable v2.
-
 "use client";
 
 import Link from "next/link";

@@ -35,26 +35,17 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children }: any) => (
-    <div data-testid="nav-items-container">{children}</div>
-  ),
-  XStack: ({ children }: any) => <div>{children}</div>,
-  Home: () => <svg data-testid="nav-icon" />,
-  H2: ({ children }: any) => <h2>{children}</h2>,
-  Body: ({ children }: any) => <span>{children}</span>,
-  Button: ({ children, onPress, loading, ...props }: any) => (
-    <button
-      onClick={onPress}
-      disabled={loading}
-      aria-busy={loading || undefined}
-    >
-      {children}
-    </button>
-  ),
-  Separator: () => <hr />,
-  LogOut: () => <svg data-testid="logout-icon" />,
-}));
+// YStack is overridden to give the nav list a handle. The real one renders a
+// plain container with no role or label, so there is nothing else to query.
+vi.mock("@chops/ui", async () => {
+  const { mocks } = await import("@/test/chops-ui-mock");
+  return {
+    ...mocks,
+    YStack: ({ children }: any) => (
+      <div data-testid="nav-items-container">{children}</div>
+    ),
+  };
+});
 
 beforeEach(() => {
   mockLogout.mockReset();
@@ -70,10 +61,10 @@ describe("Sidebar component", () => {
     expect(screen.getByText("Chops", { selector: "h2" })).toBeInTheDocument();
     expect(screen.getByText("Home")).toBeInTheDocument();
     expect(
-      screen.getByText("user@test.com", { selector: "span" }),
+      screen.getByText("user@test.com", { selector: "p" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Log Out", { selector: "span" }),
+      screen.getByText("Log Out", { selector: "p" }),
     ).toBeInTheDocument();
   });
 

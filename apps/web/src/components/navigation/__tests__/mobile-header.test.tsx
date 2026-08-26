@@ -3,21 +3,10 @@ import { describe, expect, test, vi } from "vitest";
 import { MobileHeader } from "../mobile-header";
 import userEvent from "@testing-library/user-event";
 
-vi.mock("@chops/ui", () => ({
-  XStack: ({ children }: any) => <div>{children}</div>,
-  H2: ({ children }: any) => <h2>{children}</h2>,
-  Button: ({ children, onPress, loading, ...props }: any) => (
-    <button
-      onClick={onPress}
-      disabled={loading}
-      aria-busy={loading || undefined}
-    >
-      {children}
-    </button>
-  ),
-  Menu: () => <svg data-testid="menu-icon" />,
-  X: () => <svg data-testid="x-icon" />,
-}));
+vi.mock(
+  "@chops/ui",
+  async () => (await import("@/test/chops-ui-mock")).mocks,
+);
 
 vi.mock("../mobile-menu", () => ({
   MobileMenu: ({ open }: any) => (

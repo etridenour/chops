@@ -1,3 +1,6 @@
+# Private planning docs (tracked in a separate private repo: chops-docs)
+private-docs/
+
 # Dependencies
 node_modules/
 
@@ -45,3 +48,5 @@ pnpm-debug.log*
 
 # Testing
 coverage/
+AGENTS.md
+*.tsbuildinfo

@@ -1,10 +1,11 @@
 "use client";
 
-import { YStack, Home } from "@chops/ui";
+import { YStack, Home, Drum } from "@chops/ui";
 import { NavLink } from "./nav-link";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
+  { href: "/library", label: "Library", icon: Drum },
 ];
 
 interface NavItemsProps {

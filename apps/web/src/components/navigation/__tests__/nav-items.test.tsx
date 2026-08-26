@@ -28,14 +28,15 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-vi.mock("@chops/ui", () => ({
-  YStack: ({ children }: any) => (
-    <div data-testid="nav-items-container">{children}</div>
-  ),
-  XStack: ({ children }: any) => <div>{children}</div>,
-  Home: () => <svg data-testid="nav-icon" />,
-  Body: ({ children }: any) => <span>{children}</span>,
-}));
+vi.mock("@chops/ui", async () => {
+  const { mocks } = await import("@/test/chops-ui-mock");
+  return {
+    ...mocks,
+    YStack: ({ children }: any) => (
+      <div data-testid="nav-items-container">{children}</div>
+    ),
+  };
+});
 
 beforeEach(() => {
   mockUsePathname.mockReset();
@@ -58,7 +59,7 @@ describe("NavItems component", () => {
 
     render(<NavItems onNavigate={mockOnNavigate} />);
 
-    await user.click(screen.getByRole("link"));
+    await user.click(screen.getByRole("link", { name: "Home" }));
 
     expect(mockOnNavigate).toHaveBeenCalledTimes(1);
   });
@@ -68,6 +69,9 @@ describe("NavItems component", () => {
 
     render(<NavItems />);
 
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+      "href",
+      "/",
+    );
   });
 });

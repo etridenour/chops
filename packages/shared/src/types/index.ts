@@ -9,3 +9,5 @@ export interface User {
 }
 
 export * from "./auth";
+export * from "./exercise";
+export * from "./pagination";
