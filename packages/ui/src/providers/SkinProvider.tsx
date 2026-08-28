@@ -37,6 +37,7 @@ export function SkinProvider({
 
   useEffect(() => {
     const stored = getStoredSkin()
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR: first client render must match the server's default-skin HTML, so the stored skin can only be applied after mount
     if (stored) setSkinState(stored)
   }, [])
 

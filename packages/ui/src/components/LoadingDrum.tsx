@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { Animated, Easing, type ViewStyle } from 'react-native'
 import { Drum } from '@tamagui/lucide-icons'
 import type { ColorTokens } from 'tamagui'
@@ -17,8 +17,8 @@ export function LoadingDrum({
   color = '$color',
   style,
 }: LoadingDrumProps) {
-  const rotation = useRef(new Animated.Value(0)).current
-  const scale = useRef(new Animated.Value(1)).current
+  const [rotation] = useState(() => new Animated.Value(0))
+  const [scale] = useState(() => new Animated.Value(1))
 
   useEffect(() => {
     const spinDuration = 1200

@@ -1,10 +1,10 @@
+import { useDelayedLoading } from "@/hooks/use-delayed-loading";
 import {
   deleteExercise,
   fetchExercises,
   fetchExerciseTags,
 } from "@/lib/api/exercises";
 import { getErrorMessage } from "@/lib/errors";
-import { useDelayedLoading } from "@/hooks/use-delayed-loading";
 import { Exercise, parseExerciseQuery } from "@chops/shared";
 import {
   Button,
@@ -36,23 +36,32 @@ export function ExerciseLibrary() {
   const [tagError, setTagError] = useState<string | null>(null);
   // Bumped by the retry button to re-run the fetch effect.
   const [retryCount, setRetryCount] = useState<number>(0);
+  const [tagsRefresh, setTagsRefresh] = useState<number>(0);
   const searchParamsString = searchParams.toString();
   const hasActiveFilters = !!searchText || !!searchParamsString;
   // Dim only once a refetch is slow enough to be worth showing.
   const showFetching = useDelayedLoading(isFetching);
 
-  const loadTags = useCallback(async () => {
-    try {
-      const data = await fetchExerciseTags();
-      setTags(data);
-    } catch (err) {
-      setTagError(getErrorMessage(err));
-    }
-  }, []);
-
   useEffect(() => {
+    let ignore = false;
+
+    async function loadTags() {
+      try {
+        const data = await fetchExerciseTags();
+        if (!ignore) {
+          setTags(data);
+          setTagError(null);
+        }
+      } catch (err) {
+        if (!ignore) setTagError(getErrorMessage(err));
+      }
+    }
     loadTags();
-  }, [loadTags]);
+
+    return () => {
+      ignore = true;
+    };
+  }, [tagsRefresh]);
 
   useEffect(() => {
     let ignore = false;
@@ -123,7 +132,7 @@ export function ExerciseLibrary() {
       await deleteExercise(id);
       const filteredExercises = exercises.filter((e) => e.id !== id);
       setExercises(filteredExercises);
-      loadTags();
+      setTagsRefresh((c) => c + 1);
     } catch (err) {
       setError(getErrorMessage(err));
     }
@@ -147,7 +156,9 @@ export function ExerciseLibrary() {
             id="exercise-search"
             aria-label="Search"
             value={searchText}
-            onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
+            onChange={(e) =>
+              setSearchText((e.target as HTMLInputElement).value)
+            }
           />
         </YStack>
         {tagError ? (

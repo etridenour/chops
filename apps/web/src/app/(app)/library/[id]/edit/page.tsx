@@ -6,7 +6,7 @@ import { getErrorMessage } from "@/lib/errors";
 import { Exercise } from "@chops/shared";
 import { BackButton, ErrorState, Spinner, YStack } from "@chops/ui";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SingleExercise() {
   const { id } = useParams<{ id: string }>();
@@ -16,23 +16,32 @@ export default function SingleExercise() {
   const [exercise, setExercise] = useState<Exercise>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await fetchExerciseById(id);
-      setExercise(data);
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id]);
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   useEffect(() => {
+    let ignore = false;
+
+    async function load() {
+      setError(null);
+      setIsLoading(true);
+
+      try {
+        const data = await fetchExerciseById(id);
+        if (!ignore) {
+          setExercise(data);
+        }
+      } catch (err) {
+        if (!ignore) setError(getErrorMessage(err));
+      } finally {
+        if (!ignore) setIsLoading(false);
+      }
+    }
     load();
-  }, [load]);
+
+    return () => {
+      ignore = true;
+    };
+  }, [retryCount, id]);
 
   return (
     <YStack padding="$4" gap="$4">
@@ -44,7 +53,10 @@ export default function SingleExercise() {
             <Spinner />
           </YStack>
         ) : error ? (
-          <ErrorState message={error} onRetry={load} />
+          <ErrorState
+            message={error}
+            onRetry={() => setRetryCount((c) => c + 1)}
+          />
         ) : (
           <ExerciseForm
             exercise={exercise}
