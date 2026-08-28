@@ -17,7 +17,7 @@
     "@tamagui/core": "^2.0.0-rc.14",
     "@tamagui/lucide-icons": "2.0.0-rc.14",
     "@tamagui/theme-builder": "^2.0.0-rc.14",
-    "tamagui": "^2.0.0-rc.14"
+    "tamagui": "^2.7.7"
   },
   "devDependencies": {
     "@chops/eslint-config": "workspace:*",

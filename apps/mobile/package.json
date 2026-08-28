@@ -27,7 +27,7 @@
     "react-native": "~0.81.5",
     "react-native-safe-area-context": "5.6.2",
     "react-native-screens": "~4.16.0",
-    "tamagui": "^2.0.0-rc.14"
+    "tamagui": "^2.7.7"
   },
   "devDependencies": {
     "@chops/eslint-config": "workspace:*",
