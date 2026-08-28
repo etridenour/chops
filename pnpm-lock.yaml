@@ -9,7 +9,7 @@ overrides:
   react-dom: 19.2.4
   '@types/react': ^19.1.0
   '@tamagui/core': 2.0.0-rc.14
-  '@tamagui/lucide-icons': 2.0.0-rc.14
+  '@tamagui/lucide-icons': 2.0.0-rc.26
   '@tamagui/helpers-icon': 2.0.0-rc.14
   '@tamagui/sizable-context': 2.0.0-rc.14
 
@@ -298,8 +298,8 @@ importers:
         specifier: 2.0.0-rc.14
         version: 2.0.0-rc.14(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)
       '@tamagui/lucide-icons':
-        specifier: 2.0.0-rc.14
-        version: 2.0.0-rc.14(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-svg@15.15.4(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)
+        specifier: 2.0.0-rc.26
+        version: 2.0.0-rc.26(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-svg@15.15.4(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)
       '@tamagui/theme-builder':
         specifier: ^2.0.0-rc.14
         version: 2.0.0-rc.14(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)
@@ -2566,8 +2566,8 @@ packages:
     peerDependencies:
       react: 19.2.4
 
-  '@tamagui/lucide-icons@2.0.0-rc.14':
-    resolution: {integrity: sha512-1CX4NmnhE9eu8Cubk5tzKP1YJ0XynECPkYO0f7/tK88TlpttWCBe+p8vFojo+F9VHCU+aWBLiU6f3mVFcJUVBw==}
+  '@tamagui/lucide-icons@2.0.0-rc.26':
+    resolution: {integrity: sha512-c/qs5FDMSQR7vWDfi2Ea3ocXAzTllK13ie3cvhKDBwt2RvvhvN9SXTvLFDzPRa4dcZ+C4ChAZ7N6L75Kto749g==}
     deprecated: This package has been renamed to @tamagui/lucide-icons-2. Please update your imports.
     peerDependencies:
       react: 19.2.4
@@ -10431,7 +10431,7 @@ snapshots:
       - sf-symbols-typescript
       - zeego
 
-  '@tamagui/lucide-icons@2.0.0-rc.14(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-svg@15.15.4(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)':
+  '@tamagui/lucide-icons@2.0.0-rc.26(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-svg@15.15.4(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)':
     dependencies:
       '@tamagui/core': 2.0.0-rc.14(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)
       '@tamagui/helpers-icon': 2.0.0-rc.14(react-dom@19.2.4(react@19.2.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-svg@15.15.4(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)(sf-symbols-typescript@2.2.0)
