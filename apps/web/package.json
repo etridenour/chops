@@ -22,7 +22,7 @@
     "react-dom": "^19",
     "react-hook-form": "^7.80.0",
     "react-native-svg-web": "^1.0.9",
-    "react-native-web": "^0.20.0",
+    "react-native-web": "^0.21.2",
     "tamagui": "^2.0.0-rc.14"
   },
   "devDependencies": {
