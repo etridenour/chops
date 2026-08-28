@@ -1,19 +1,22 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: Number(process.env.SMTP_PORT) || 465,
+  secure: (process.env.SMTP_SECURE ?? "true") === "true",
+  auth: process.env.SMTP_USER
+    ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+    : undefined,
 });
+
+const from = process.env.SMTP_FROM || process.env.SMTP_USER;
 
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
   const webUrl = process.env.WEB_URL || "http://localhost:3000";
   const verifyUrl = `${webUrl}/verify?token=${token}`;
 
   await transporter.sendMail({
-    from: process.env.SMTP_USER,
+    from,
     to: email,
     subject: "Verify your Chops account",
     html: `
@@ -31,7 +34,7 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
   const resetUrl = `${webUrl}/reset-password?token=${token}`;
 
   await transporter.sendMail({
-    from: process.env.SMTP_USER,
+    from,
     to: email,
     subject: "Reset your Chops password",
     html: `
