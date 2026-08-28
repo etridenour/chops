@@ -17,6 +17,7 @@ Tests catch bugs before users do, and give you confidence to refactor code witho
 | **React Testing Library (RTL)** | Gives you tools to render React components and find elements on the "screen." Instead of checking internal state or implementation details, it lets you test what the user actually sees and interacts with. |
 | **@testing-library/user-event** | Simulates real user interactions — typing, clicking, tabbing. More realistic than RTL's basic `fireEvent` because it triggers the full chain of browser events (focus → keydown → input → keyup → change). |
 | **@testing-library/jest-dom** | Adds extra assertions (the `expect(...).toSomething()` checks) that are specific to DOM elements. Things like `toBeInTheDocument()`, `toHaveTextContent()`, `toBeVisible()`. Without it, you'd only have generic checks like `toBe(true)`. |
+| **Playwright** | The end-to-end runner. Drives a real browser against the real stack. Separate from everything else in this table — see [End-to-End Tests](#end-to-end-tests-playwright). |
 | **@vitejs/plugin-react** | Lets Vitest understand JSX/TSX files (the `<Component />` syntax). Without it, Vitest would see JSX and not know what to do with it. |
 
 ## Running Tests
@@ -376,6 +377,67 @@ await screen.findByText("Loaded");  // retries until found or timeout
 | `getBy` | Throws error | No | Element should exist right now |
 | `queryBy` | Returns null | No | Asserting element does NOT exist |
 | `findBy` | Throws error | Yes | Element will appear after async work |
+
+## End-to-End Tests (Playwright)
+
+Everything above runs code in a fake browser with the network mocked. End-to-end tests run the
+whole stack for real: a real browser driving the real Next.js app against the real Express API
+and a real Postgres. Nothing is mocked. They catch the bugs that only exist between the pieces,
+and they are slower and flakier, so there are few of them and they cover journeys, not details.
+
+They live in the `e2e/` workspace package (`@chops/e2e`) and are **not** part of `pnpm test`.
+
+### Running them
+
+```bash
+pnpm e2e          # install browser if needed, start containers, migrate, run specs
+pnpm e2e:down     # stop the containers when you're finished
+```
+
+`pnpm e2e` deliberately leaves the containers running, so a failed run leaves the database and
+the Mailpit inbox open for inspection. Mailpit's web UI is at http://localhost:8025.
+
+Other entry points:
+
+```bash
+pnpm --filter @chops/e2e e2e:ui       # time-travel runner — the tool to actually debug in
+pnpm --filter @chops/e2e e2e:report   # open the HTML report from the last run
+```
+
+### What's required on a fresh clone
+
+`pnpm install` is not enough. The Chromium build Playwright drives is a separate ~95MB download
+that lives in an OS-level cache, not in `node_modules`. `pnpm e2e` runs `playwright install`
+first so this can't be forgotten; it's a no-op (about a second) once the browser is present, and
+it also picks up the new build whenever `@playwright/test` is upgraded.
+
+Docker must be running. The containers are defined in `docker-compose.e2e.yml`.
+
+### How the environment is wired
+
+- **Postgres** on host port `5433`, so it can never collide with your dev database on `5432`.
+  Its data lives in `tmpfs`, so `e2e:down` then `e2e` gives a guaranteed-clean database.
+- **Mailpit** on `1025` (SMTP) and `8025` (HTTP). It is a fake mail server: it accepts mail and
+  never delivers it. Tests read the verification email from its HTTP API to get the signup token,
+  which is the only way to complete an account in a test. It also stops `signup/start` from
+  failing on missing Gmail credentials.
+- **The apps** are started by Playwright's `webServer`, API on `4001` and web on `3001`, with env
+  overrides pointing them at the test database and at Mailpit. Playwright stops them afterwards.
+  `reuseExistingServer: false` prevents silently attaching to a `pnpm dev` server that is pointed
+  at your real data.
+
+### Rules for writing them
+
+- **Every test creates its own data.** Unique emails (`user-<random>@example.test`), never a
+  shared fixture user. This is what makes parallel runs safe; a shared account would force the
+  suite to run one test at a time.
+- **Same selector discipline as the unit tests**: `getByRole` and `getByLabel` first,
+  `data-testid` last. The selector is where the test is glued to the markup, and CSS-path
+  selectors turn every restyle into a red build.
+- **Never write a manual wait.** Playwright retries every action until the element is present,
+  visible and clickable. A hardcoded sleep is a smell.
+- **Use the `request` fixture for setup.** Driving the UI to create data you already know how to
+  create over HTTP is the main reason e2e suites get slow.
 
 ## What to Test (and What Not To)
 
