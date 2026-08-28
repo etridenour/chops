@@ -28,7 +28,11 @@ export function filterProps(props: Record<string, any>) {
   const domSafe: Record<string, any> = {};
   for (const [key, val] of Object.entries(props)) {
     if (key.startsWith("on")) continue;
-    if (key.startsWith("aria-") || key.startsWith("data-") || DOM_ATTRS.has(key))
+    if (
+      key.startsWith("aria-") ||
+      key.startsWith("data-") ||
+      DOM_ATTRS.has(key)
+    )
       domSafe[key] = val;
   }
   return domSafe;
