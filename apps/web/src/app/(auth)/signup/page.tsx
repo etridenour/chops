@@ -51,10 +51,15 @@ export default function SignupPage() {
           Check your email
         </H1>
         <Body textAlign="center" marginBottom="$3">
-          We sent a verification link to <strong>{email}</strong>.
-          Click the link to create your account.
+          We sent a verification link to <strong>{email}</strong>. Click the
+          link to create your account.
         </Body>
-        <Body color="$colorSubtle" textAlign="center" fontSize="$2" marginBottom="$6">
+        <Body
+          color="$colorSubtle"
+          textAlign="center"
+          fontSize="$2"
+          marginBottom="$6"
+        >
           The link expires in 1 hour.
         </Body>
         <Link href="/login">
@@ -81,7 +86,12 @@ export default function SignupPage() {
           />
         </YStack>
         <AuthError error={error} />
-        <Button variant="primary" fullWidth loading={isSubmitting} onPress={handleSubmit}>
+        <Button
+          variant="primary"
+          fullWidth
+          loading={isSubmitting}
+          onPress={handleSubmit}
+        >
           Send Verification Email
         </Button>
       </YStack>
