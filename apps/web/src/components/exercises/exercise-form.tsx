@@ -45,7 +45,7 @@ export default function ExerciseForm({
     defaultValues: exercise
       ? {
           title: exercise.title,
-          difficulty: exercise.difficulty,
+          difficulty: exercise.difficulty ?? undefined,
           tags: exercise.tags,
           segments: exercise.segments,
         }
