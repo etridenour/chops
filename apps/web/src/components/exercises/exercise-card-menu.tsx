@@ -38,6 +38,7 @@ export function ExerciseCardMenu({ onEdit, onDelete }: ExerciseCardMenuProps) {
             variant="ghost"
             size="sm"
             hoverStyle={{ backgroundColor: "$backgroundMutedPress" }}
+            aria-label="Exercise options"
           >
             <MoreVertical size={18} color="$colorMuted" />
           </Button>

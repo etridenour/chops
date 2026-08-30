@@ -25,12 +25,18 @@ export function NavLink({ href, label, icon: Icon, onPress }: NavLinkProps) {
         padding="$3"
         borderRadius="$2"
         backgroundColor={isActive ? "$backgroundMuted" : "transparent"}
-        hoverStyle={{ backgroundColor: isActive ? "$backgroundMuted" : "$backgroundHover" }}
+        hoverStyle={{
+          backgroundColor: isActive ? "$backgroundMuted" : "$backgroundHover",
+        }}
         pressStyle={{ backgroundColor: "$backgroundPress" }}
         cursor="pointer"
       >
         <Icon size={20} color={isActive ? "$color" : "$colorMuted"} />
-        <Body color={isActive ? "$color" : "$colorMuted"} fontSize="$3" fontWeight={isActive ? "600" : "400"}>
+        <Body
+          color={isActive ? "$color" : "$colorMuted"}
+          fontSize="$3"
+          fontWeight={isActive ? "600" : "400"}
+        >
           {label}
         </Body>
       </XStack>
