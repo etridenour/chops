@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { randomUUID } from "crypto";
-import { MAILPIT_URL } from "../playwright.config";
+import { getVerificationLink } from "../helpers/user";
 
 test("a new user can sign up, verify, log out and log back in", async ({
   page,
@@ -15,27 +15,8 @@ test("a new user can sign up, verify, log out and log back in", async ({
     page.getByRole("heading", { name: "Check your email" }),
   ).toBeVisible();
 
-  await expect
-    .poll(async () => {
-      const res = await request.get(
-        `${MAILPIT_URL}/api/v1/search?query=to:${email}`,
-      );
-      const body = await res.json();
-      return body.messages.length;
-    })
-    .toBeGreaterThan(0);
-
-  const res = await request.get(
-    `${MAILPIT_URL}/api/v1/search?query=to:${email}`,
-  );
-  const { messages } = await res.json();
-  const id = messages[0].ID;
-
-  const message = await request.get(`${MAILPIT_URL}/api/v1/message/${id}`);
-  const { HTML } = await message.json();
-  const link = HTML.match(/http:\/\/localhost:3001\/verify\?token=[a-f0-9]+/);
-  expect(link).not.toBeNull();
-  await page.goto(link![0]);
+  const link = await getVerificationLink(request, email);
+  await page.goto(link);
   await expect(
     page.getByRole("heading", { name: "Complete Your Account" }),
   ).toBeVisible();
