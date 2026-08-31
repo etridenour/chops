@@ -84,6 +84,7 @@ export const mocks = {
         aria-disabled={isDisabled || undefined}
         aria-busy={loading || undefined}
         aria-label={props["aria-label"]}
+        type={props.type || "button"}
       >
         {children}
       </button>

@@ -1,14 +1,13 @@
-import { useFieldArray, Controller, Control } from "react-hook-form";
 import { CreateExerciseRequest } from "@chops/shared";
 import {
   Body,
   Button,
-  Input,
   Separator,
   ToggleGroup,
   XStack,
   YStack,
 } from "@chops/ui";
+import { Control, Controller, useFieldArray } from "react-hook-form";
 import { NumberInput } from "./number-input";
 
 export function SegmentsEditor({

@@ -83,80 +83,78 @@ export default function ExerciseForm({
     errors.segments?.root?.message ?? errors.segments?.message;
 
   return (
-    <YStack gap="$7">
-      <H1>{exercise?.id ? "Edit Exercise" : "New Exercise"}</H1>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <YStack gap="$7">
+        <H1>{exercise?.id ? "Edit Exercise" : "New Exercise"}</H1>
 
-      <YStack gap="$1">
-        <Label htmlFor="title">Title</Label>
-        <Controller
-          control={control}
-          name="title"
-          render={({ field }) => (
-            <Input
-              id="title"
-              value={field.value}
-              onChange={(e) =>
-                field.onChange((e.target as HTMLInputElement).value)
-              }
-              onBlur={field.onBlur}
-            />
+        <YStack gap="$1">
+          <Label htmlFor="title">Title</Label>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <Input
+                id="title"
+                value={field.value}
+                onChange={(e) =>
+                  field.onChange((e.target as HTMLInputElement).value)
+                }
+                onBlur={field.onBlur}
+              />
+            )}
+          />
+          {errors.title && <ErrorText>{errors.title.message}</ErrorText>}
+        </YStack>
+
+        <YStack gap="$2">
+          <XStack justifyContent="space-between" alignItems="center">
+            <Label>Time signatures</Label>
+            <Body color="$colorMuted">{totalMeasures} measures total</Body>
+          </XStack>
+          <SegmentsEditor control={control} />
+          {segmentsError && <ErrorText>{segmentsError}</ErrorText>}
+        </YStack>
+
+        <YStack gap="$1">
+          <Label>Tags</Label>
+          <Controller
+            control={control}
+            name="tags"
+            render={({ field }) => (
+              <TagInput value={field.value ?? []} onChange={field.onChange} />
+            )}
+          />
+        </YStack>
+
+        <YStack gap="$1">
+          <Label>Difficulty</Label>
+          <Controller
+            control={control}
+            name="difficulty"
+            render={({ field }) => (
+              <ToggleGroup
+                options={[1, 2, 3, 4, 5]}
+                value={field.value}
+                allowDeselect={true}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          {errors.difficulty && (
+            <ErrorText>{errors.difficulty.message}</ErrorText>
           )}
-        />
-        {errors.title && <ErrorText>{errors.title.message}</ErrorText>}
-      </YStack>
+        </YStack>
 
-      <YStack gap="$2">
-        <XStack justifyContent="space-between" alignItems="center">
-          <Label>Time signatures</Label>
-          <Body color="$colorMuted">{totalMeasures} measures total</Body>
+        <XStack gap="$3" justifyContent="flex-end" marginTop="$2">
+          <Button variant="secondary" onPress={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+            {exercise?.id ? "Save" : "Create"}
+          </Button>
         </XStack>
-        <SegmentsEditor control={control} />
-        {segmentsError && <ErrorText>{segmentsError}</ErrorText>}
+        {submitError && <ErrorText>{submitError}</ErrorText>}
       </YStack>
-
-      <YStack gap="$1">
-        <Label>Tags</Label>
-        <Controller
-          control={control}
-          name="tags"
-          render={({ field }) => (
-            <TagInput value={field.value ?? []} onChange={field.onChange} />
-          )}
-        />
-      </YStack>
-
-      <YStack gap="$1">
-        <Label>Difficulty</Label>
-        <Controller
-          control={control}
-          name="difficulty"
-          render={({ field }) => (
-            <ToggleGroup
-              options={[1, 2, 3, 4, 5]}
-              value={field.value}
-              allowDeselect={true}
-              onChange={field.onChange}
-            />
-          )}
-        />
-        {errors.difficulty && (
-          <ErrorText>{errors.difficulty.message}</ErrorText>
-        )}
-      </YStack>
-
-      <XStack gap="$3" justifyContent="flex-end" marginTop="$2">
-        <Button variant="secondary" onPress={onCancel}>
-          Cancel
-        </Button>
-        <Button
-          onPress={handleSubmit(onSubmit)}
-          disabled={isSubmitting}
-          loading={isSubmitting}
-        >
-          {exercise?.id ? "Save" : "Create"}
-        </Button>
-      </XStack>
-      {submitError && <ErrorText>{submitError}</ErrorText>}
-    </YStack>
+    </form>
   );
 }

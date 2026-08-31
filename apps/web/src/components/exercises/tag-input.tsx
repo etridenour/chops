@@ -18,6 +18,13 @@ export function TagInput({ value, onChange }: TagProps) {
     setTagInput("");
   };
 
+  const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTag();
+    }
+  };
+
   return (
     <YStack gap="$2">
       <XStack gap="$2">
@@ -25,6 +32,7 @@ export function TagInput({ value, onChange }: TagProps) {
           value={tagInput}
           onChange={(e) => setTagInput((e.target as HTMLInputElement).value)}
           placeholder="Add a tag"
+          onKeyDown={handleEnterKey}
         />
         <Button onPress={addTag}>Add</Button>
       </XStack>

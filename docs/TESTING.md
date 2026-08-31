@@ -117,6 +117,8 @@ The factory has to be `async`. `vi.mock` is hoisted above the imports, so a top-
 3. **Prefer fixing production over enriching the mock.** Several stand-ins carry a `data-testid` only because the real component exposes no queryable handle. `Chip` and `Skeleton` are the current examples, and the icons re-exported from lucide render an `<svg>` with no accessible name. Each of those is a gap in the component, not a feature of the mock.
 4. **`filterProps` is an allowlist, not a pattern.** It drops every prop not named in `DOM_ATTRS` (plus anything `aria-*` or `data-*`). An earlier version kept every lowercase key, which let Tamagui's lowercase style props (`gap`, `opacity`, `flex`, `position`) through onto the element, where they are not valid HTML attributes. It also drops every `on*` handler, so a stand-in cannot invent click behavior the real component lacks. Wire handlers explicitly on the components that really are interactive.
 
+The Button stand-in renders its `type` attribute, defaulting to `"button"` like production (Aug 2026, the exercise form's native submit path). The form element itself needs no stand-in — the exercise form renders a plain `<form>`, so tests see the real thing. jsdom fires the form's submit event when a submit button is clicked, but it does not implement Enter-in-a-field submission — Enter-to-submit is covered only by the e2e suite.
+
 ### Why the `packages/ui` config is bigger
 
 Rendering real Tamagui in a fake browser needs extra plumbing that the web app's tests never needed:
