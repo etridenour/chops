@@ -10,6 +10,22 @@ describe("Button", () => {
     onPress.mockReset();
   });
 
+  it("button has type button by default", () => {
+    render(<Button onPress={onPress}>Save</Button>);
+
+    expect(screen.getByRole("button")).toHaveAttribute("type", "button");
+  });
+
+  it("button has type submit when passed", () => {
+    render(
+      <Button onPress={onPress} type="submit">
+        Save
+      </Button>,
+    );
+
+    expect(screen.getByRole("button")).toHaveAttribute("type", "submit");
+  });
+
   describe("pressing", () => {
     it("calls onPress when clicked", () => {
       render(<Button onPress={onPress}>Save</Button>);
