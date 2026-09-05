@@ -1,8 +1,15 @@
 import z from "zod";
 
 const timeSignatureSegmentSchema = z.object({
-  measureCount: z.number().int().min(1),
-  timeSigTop: z.number().min(1).max(16),
+  measureCount: z
+    .number("At least one measure is required")
+    .int("Only whole numbers allowed")
+    .min(1, "At least one measure is required"),
+  timeSigTop: z
+    .number("At least one beat is required")
+    .int("Only whole numbers allowed")
+    .min(1, "At least one beat is required")
+    .max(16, "16 beats or fewer"),
   timeSigBottom: z
     .number()
     .refine((v) => [4, 8, 16, 32].includes(v), "Must be 4, 8, 16, or 32"),
