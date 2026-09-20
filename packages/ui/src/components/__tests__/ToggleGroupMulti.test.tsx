@@ -14,7 +14,12 @@ describe("ToggleGroupMulti", () => {
 
   it("renders one button per option", () => {
     render(
-      <ToggleGroupMulti options={OPTIONS} value={[]} onChange={onChange} />,
+      <ToggleGroupMulti
+        options={OPTIONS}
+        value={[]}
+        label="Label"
+        onChange={onChange}
+      />,
     );
 
     expect(screen.getByRole("button", { name: "snare" })).toBeInTheDocument();
@@ -28,6 +33,7 @@ describe("ToggleGroupMulti", () => {
       <ToggleGroupMulti
         options={OPTIONS}
         value={["snare", "bass"]}
+        label="Label"
         onChange={onChange}
       />,
     );
@@ -44,7 +50,12 @@ describe("ToggleGroupMulti", () => {
 
   it("marks every option as not pressed when the value is empty", () => {
     render(
-      <ToggleGroupMulti options={OPTIONS} value={[]} onChange={onChange} />,
+      <ToggleGroupMulti
+        options={OPTIONS}
+        value={[]}
+        label="Label"
+        onChange={onChange}
+      />,
     );
 
     expect(screen.queryByRole("button", { pressed: true })).toBeNull();
@@ -56,6 +67,7 @@ describe("ToggleGroupMulti", () => {
       <ToggleGroupMulti
         options={OPTIONS}
         value={["snare"]}
+        label="Label"
         onChange={onChange}
       />,
     );
@@ -71,6 +83,7 @@ describe("ToggleGroupMulti", () => {
       <ToggleGroupMulti
         options={OPTIONS}
         value={["snare", "tenor", "bass"]}
+        label="Label"
         onChange={onChange}
       />,
     );
@@ -85,6 +98,7 @@ describe("ToggleGroupMulti", () => {
       <ToggleGroupMulti
         options={OPTIONS}
         value={["tenor"]}
+        label="Label"
         onChange={onChange}
       />,
     );
@@ -98,12 +112,30 @@ describe("ToggleGroupMulti", () => {
     const value = ["snare"];
 
     render(
-      <ToggleGroupMulti options={OPTIONS} value={value} onChange={onChange} />,
+      <ToggleGroupMulti
+        options={OPTIONS}
+        value={value}
+        label="Label"
+        onChange={onChange}
+      />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "bass" }));
 
     expect(value).toEqual(["snare"]);
     expect(onChange.mock.calls[0][0]).not.toBe(value);
+  });
+
+  it("has a group role and the label is passed through", () => {
+    render(
+      <ToggleGroupMulti
+        options={OPTIONS}
+        value={["snare"]}
+        label="Difficulty"
+        onChange={onChange}
+      />,
+    );
+
+    expect(screen.getByRole("group", { name: "Label" })).toBeInTheDocument();
   });
 });

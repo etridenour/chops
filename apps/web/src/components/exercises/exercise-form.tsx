@@ -136,6 +136,7 @@ export default function ExerciseForm({
                 options={[1, 2, 3, 4, 5]}
                 value={field.value}
                 allowDeselect={true}
+                label="Difficulty"
                 onChange={field.onChange}
               />
             )}

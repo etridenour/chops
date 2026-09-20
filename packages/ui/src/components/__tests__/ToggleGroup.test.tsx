@@ -14,7 +14,12 @@ describe("ToggleGroup", () => {
 
   it("renders one button per option", () => {
     render(
-      <ToggleGroup options={OPTIONS} value={undefined} onChange={onChange} />,
+      <ToggleGroup
+        options={OPTIONS}
+        value={undefined}
+        label="Label"
+        onChange={onChange}
+      />,
     );
 
     expect(screen.getByRole("button", { name: "easy" })).toBeInTheDocument();
@@ -26,7 +31,14 @@ describe("ToggleGroup", () => {
   // Guards a future refactor: if these ever become real DOM inputs, the option
   // would round-trip through `value` and come back as the string "8".
   it("passes the option back with its original type", () => {
-    render(<ToggleGroup options={[2, 4, 8]} value={4} onChange={onChange} />);
+    render(
+      <ToggleGroup
+        options={[2, 4, 8]}
+        value={4}
+        label="Label"
+        onChange={onChange}
+      />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "8" }));
 
@@ -34,7 +46,14 @@ describe("ToggleGroup", () => {
   });
 
   it("marks the selected option as pressed and the rest as not", () => {
-    render(<ToggleGroup options={OPTIONS} value="medium" onChange={onChange} />);
+    render(
+      <ToggleGroup
+        options={OPTIONS}
+        value="medium"
+        label="Label"
+        onChange={onChange}
+      />,
+    );
 
     expect(screen.getByRole("button", { pressed: true })).toHaveTextContent(
       "medium",
@@ -44,7 +63,12 @@ describe("ToggleGroup", () => {
 
   it("marks every option as not pressed when nothing is selected", () => {
     render(
-      <ToggleGroup options={OPTIONS} value={undefined} onChange={onChange} />,
+      <ToggleGroup
+        options={OPTIONS}
+        value={undefined}
+        label="Label"
+        onChange={onChange}
+      />,
     );
 
     expect(screen.queryByRole("button", { pressed: true })).toBeNull();
@@ -52,7 +76,14 @@ describe("ToggleGroup", () => {
   });
 
   it("calls onChange with the option when an unselected option is clicked", () => {
-    render(<ToggleGroup options={OPTIONS} value="easy" onChange={onChange} />);
+    render(
+      <ToggleGroup
+        options={OPTIONS}
+        value="easy"
+        label="Label"
+        onChange={onChange}
+      />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "hard" }));
 
@@ -63,7 +94,12 @@ describe("ToggleGroup", () => {
   describe("when allowDeselect is off (the default)", () => {
     it("re-selects the option when the selected option is clicked", () => {
       render(
-        <ToggleGroup options={OPTIONS} value="medium" onChange={onChange} />,
+        <ToggleGroup
+          options={OPTIONS}
+          value="medium"
+          label="Label"
+          onChange={onChange}
+        />,
       );
 
       fireEvent.click(screen.getByRole("button", { name: "medium" }));
@@ -78,6 +114,7 @@ describe("ToggleGroup", () => {
         <ToggleGroup
           options={OPTIONS}
           value="medium"
+          label="Label"
           onChange={onChange}
           allowDeselect
         />,
@@ -93,6 +130,7 @@ describe("ToggleGroup", () => {
         <ToggleGroup
           options={OPTIONS}
           value="medium"
+          label="Label"
           onChange={onChange}
           allowDeselect
         />,
@@ -102,5 +140,18 @@ describe("ToggleGroup", () => {
 
       expect(onChange).toHaveBeenCalledWith("hard");
     });
+  });
+
+  it("has a group role and the label is passed through", () => {
+    render(
+      <ToggleGroup
+        options={OPTIONS}
+        value="medium"
+        label="Difficulty"
+        onChange={onChange}
+      />,
+    );
+
+    expect(screen.getByRole("group", { name: "Label" })).toBeInTheDocument();
   });
 });

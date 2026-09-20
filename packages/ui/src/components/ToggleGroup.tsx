@@ -6,6 +6,7 @@ import { Button } from "./Button";
 interface ToggleGroupProps<T> {
   options: T[];
   value: T | undefined;
+  label: string;
   onChange: (v: T | undefined) => void;
   allowDeselect?: boolean; // difficulty (optional) = true; timeSigBottom (required) = false
 }
@@ -13,11 +14,12 @@ interface ToggleGroupProps<T> {
 export function ToggleGroup<T extends string | number>({
   options,
   value,
+  label,
   onChange,
   allowDeselect = false,
 }: ToggleGroupProps<T>) {
   return (
-    <XStack gap="$2">
+    <XStack gap="$2" role="group" aria-label={label}>
       {options.map((option) => (
         <Button
           width="$8"

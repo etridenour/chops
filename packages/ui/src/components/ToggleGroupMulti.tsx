@@ -6,12 +6,14 @@ import { Button } from "./Button";
 interface ToggleGroupMultiProps<T> {
   options: T[];
   value: T[];
+  label: string;
   onChange: (v: T[]) => void;
 }
 
 export function ToggleGroupMulti<T extends string | number>({
   options,
   value,
+  label,
   onChange,
 }: ToggleGroupMultiProps<T>) {
   const handleChange = (option: T) => {
@@ -24,7 +26,7 @@ export function ToggleGroupMulti<T extends string | number>({
     }
   };
   return (
-    <XStack gap="$2">
+    <XStack gap="$2" role="group" aria-label={label}>
       {options.map((option) => (
         <Button
           key={option}

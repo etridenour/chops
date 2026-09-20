@@ -78,6 +78,7 @@ export function SegmentsEditor({
                       options={[4, 8, 16, 32]}
                       value={field.value}
                       allowDeselect={false}
+                      label={`Segment ${index + 1} beat type`}
                       onChange={field.onChange}
                     />
                   )}
