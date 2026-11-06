@@ -36,7 +36,7 @@
     "@types/node": "^22",
     "@types/nodemailer": "^7.0.9",
     "eslint": "^9",
-    "prisma": "^6",
+    "prisma": "^7",
     "tsx": "^4",
     "typescript": "^5"
   }
