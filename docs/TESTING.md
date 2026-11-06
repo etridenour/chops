@@ -440,6 +440,10 @@ Docker must be running. The containers are defined in `docker-compose.e2e.yml`.
   visible and clickable. A hardcoded sleep is a smell.
 - **Use the `request` fixture for setup.** Driving the UI to create data you already know how to
   create over HTTP is the main reason e2e suites get slow.
+- **Scan every new screen and state for a11y.** Call `expectNoA11yViolations(page, "<screen>")`
+  from `e2e/helpers/a11y.ts` once the state is visible: empty, filled, errors showing, dialog
+  open. It runs axe against WCAG 2.2 AA on the rendered DOM, so it sees inside Tamagui components
+  that `eslint-plugin-jsx-a11y` can't. It is a soft assertion, so one run reports every screen.
 
 ## What to Test (and What Not To)
 
