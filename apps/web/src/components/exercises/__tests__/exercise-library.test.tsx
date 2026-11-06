@@ -298,9 +298,9 @@ describe("ExerciseLibrary", () => {
     const user = userEvent.setup();
     render(<ExerciseLibrary />);
 
-    const card = await screen.findByRole("button", {
-      name: /Single Stroke Roll/,
-    });
+    const [card] = (await screen.findAllByRole("listitem")).filter((item) =>
+      within(item).queryByText("Single Stroke Roll"),
+    );
     await user.click(within(card).getByRole("button", { name: "Delete" }));
 
     const dialog = screen.getByRole("alertdialog");

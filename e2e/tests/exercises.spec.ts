@@ -35,7 +35,7 @@ test("a user can CRUD an exercise", async ({ page, request }) => {
   await expect(page.getByText(exerciseNewTitle)).toBeVisible();
   await expectNoA11yViolations(page, "library with an exercise");
 
-  await page.getByRole("button").getByText(exerciseNewTitle).click();
+  await page.getByRole("button", { name: exerciseNewTitle }).press("Enter");
   await expect(
     page.getByRole("heading", { name: "Edit Exercise" }),
   ).toBeVisible();
@@ -46,7 +46,8 @@ test("a user can CRUD an exercise", async ({ page, request }) => {
   await expect(page.getByText(exerciseEditTitle)).toBeVisible();
 
   await page
-    .getByRole("button", { name: exerciseEditTitle })
+    .getByRole("listitem")
+    .filter({ hasText: exerciseEditTitle })
     .getByRole("button", { name: "Exercise options" })
     .click();
   await expectNoA11yViolations(page, "exercise options menu");
