@@ -15,6 +15,7 @@ Cross-platform component library shared by web and mobile. Single source of trut
 - Light/dark themes auto-resolve based on system preference.
 - Skins (retro, neon) overlay on the active theme — use `SkinProvider` + `useSkin()`.
 - Use semantic colors (`$background`, `$color`, `$colorMuted`, `$borderColor`, `$placeholderColor`) — not raw palette values.
+- `src/themes/__tests__/contrast.test.ts` enforces 4.5:1 text contrast on `light`/`dark`. Skins and accents are not covered yet (BACKLOG).
 
 ## Component Patterns
 

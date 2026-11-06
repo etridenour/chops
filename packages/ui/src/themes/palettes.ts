@@ -8,8 +8,8 @@ export const lightPalette = [
   '#e8e8e8', // 3  surface3
   '#cccccc', // 4  borderColor
   '#aaaaaa', // 5  muted
-  '#999999', // 6  placeholder
-  '#666666', // 7  secondary text
+  '#767676', // 6  placeholder
+  '#555555', // 7  secondary text
   '#444444', // 8
   '#333333', // 9  primary text / buttons
   '#222222', // 10
@@ -24,7 +24,7 @@ export const darkPalette = [
   '#333333', // 4  borderColor
   '#555555', // 5  muted
   '#777777', // 6  placeholder
-  '#999999', // 7  secondary text
+  '#a0a0a0', // 7  secondary text
   '#bbbbbb', // 8
   '#dddddd', // 9  primary text
   '#eeeeee', // 10
