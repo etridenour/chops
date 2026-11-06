@@ -2,7 +2,8 @@
   "name": "chops-app",
   "private": true,
   "scripts": {
-    "dev": "pnpm dev:kill && turbo dev --filter=@chops/web --filter=@chops/api --filter=@chops/shared & cd apps/mobile && pnpm dev",
+    "prepare": "simple-git-hooks",
+    "dev":"pnpm dev:kill && turbo dev --filter=@chops/web --filter=@chops/api --filter=@chops/shared & cd apps/mobile && pnpm dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
@@ -25,8 +26,12 @@
     "@vitejs/plugin-react": "^6.0.1",
     "happy-dom": "^20.11.6",
     "jsdom": "^29.0.1",
+    "simple-git-hooks": "^2.14.0",
     "turbo": "^2.8.8",
     "vitest": "^4.1.2"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm check"
   },
   "packageManager": "pnpm@9.15.4",
   "pnpm": {
