@@ -136,6 +136,6 @@ describe("ToggleGroupMulti", () => {
       />,
     );
 
-    expect(screen.getByRole("group", { name: "Label" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Difficulty" })).toBeInTheDocument();
   });
 });
