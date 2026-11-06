@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectNoA11yViolations } from "../helpers/a11y";
 import { createVerifiedUser } from "../helpers/user";
 
 test("a user can CRUD an exercise", async ({ page, request }) => {
@@ -19,29 +20,40 @@ test("a user can CRUD an exercise", async ({ page, request }) => {
     .getByRole("link", { name: "Library" })
     .click();
   await expect(page.getByRole("heading", { name: "Library" })).toBeVisible();
+  await expectNoA11yViolations(page, "empty library");
   await page.getByRole("button", { name: "New Exercise" }).click();
   await expect(
     page.getByRole("heading", { name: "New Exercise" }),
   ).toBeVisible();
+  await expectNoA11yViolations(page, "new exercise form");
+  await page.getByRole("button", { name: "Create" }).click();
+  await expect(page.getByText("Exercise name is required")).toBeVisible();
+  await expectNoA11yViolations(page, "new exercise form with errors");
   await page.getByLabel("Title", { exact: true }).fill(exerciseNewTitle);
   await page.getByRole("button", { name: "Create" }).click();
   await expect(page.getByRole("heading", { name: "Library" })).toBeVisible();
   await expect(page.getByText(exerciseNewTitle)).toBeVisible();
+  await expectNoA11yViolations(page, "library with an exercise");
 
-  await page.getByRole("button").getByText(exerciseNewTitle).click();
+  await page.getByRole("button", { name: exerciseNewTitle }).press("Enter");
   await expect(
     page.getByRole("heading", { name: "Edit Exercise" }),
   ).toBeVisible();
+  await expectNoA11yViolations(page, "edit exercise form");
   await page.getByLabel("Title", { exact: true }).fill(exerciseEditTitle);
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("heading", { name: "Library" })).toBeVisible();
   await expect(page.getByText(exerciseEditTitle)).toBeVisible();
 
   await page
-    .getByRole("button", { name: exerciseEditTitle })
+    .getByRole("listitem")
+    .filter({ hasText: exerciseEditTitle })
     .getByRole("button", { name: "Exercise options" })
     .click();
+  await expectNoA11yViolations(page, "exercise options menu");
   await page.getByRole("button", { name: "Delete" }).click();
+  await expect(page.getByRole("alertdialog")).toBeVisible();
+  await expectNoA11yViolations(page, "delete confirmation");
   await page
     .getByRole("alertdialog")
     .getByRole("button", { name: "Delete" })

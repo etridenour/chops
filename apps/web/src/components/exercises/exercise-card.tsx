@@ -51,24 +51,30 @@ export function ExerciseCard({
 
   return (
     <Card
+      role="listitem"
       onPress={onEdit}
       cursor="pointer"
-      role="button"
-      tabIndex={0}
-      focusStyle={{ borderColor: "$borderColorFocus" }}
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
       backgroundColor={pressed ? "$backgroundMutedPress" : "$backgroundMuted"}
-      onKeyDown={(e) => {
-        if (e.target !== e.currentTarget) return; // came from the kebab, not the card
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onEdit();
-        }
-      }}
     >
       <XStack justifyContent="space-between" alignItems="center" gap="$2">
-        <Body flex={1} numberOfLines={1} fontWeight="600">
+        <Body
+          render="button"
+          flex={1}
+          numberOfLines={1}
+          fontWeight="600"
+          textAlign="left"
+          backgroundColor="transparent"
+          borderWidth={0}
+          padding={0}
+          cursor="pointer"
+          focusVisibleStyle={{
+            outlineColor: "$borderColorFocus",
+            outlineWidth: 2,
+            outlineStyle: "solid",
+          }}
+        >
           {exercise.title}
         </Body>
         <XStack

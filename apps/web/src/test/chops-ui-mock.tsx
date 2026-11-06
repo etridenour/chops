@@ -61,7 +61,8 @@ export const mocks = {
 
   H1: ({ children }: any) => <h1>{children}</h1>,
   H2: ({ children }: any) => <h2>{children}</h2>,
-  Body: ({ children }: any) => <p>{children}</p>,
+  Body: ({ children, render }: any) =>
+    render === "button" ? <button>{children}</button> : <p>{children}</p>,
   Label: ({ children, htmlFor }: any) => (
     <label htmlFor={htmlFor}>{children}</label>
   ),
@@ -139,14 +140,8 @@ export const mocks = {
   // Differs from production: the real Card is a styled YStack with no role,
   // tabIndex, or key handling. ExerciseCard hand-rolls all three on top of it,
   // and this mirrors what that call site produces rather than the component.
-  Card: ({ children, onPress, onKeyDown, ...props }: any) => (
-    <div
-      onClick={onPress}
-      onKeyDown={onKeyDown}
-      role="button"
-      tabIndex={0}
-      {...filterProps(props)}
-    >
+  Card: ({ children, onPress, ...props }: any) => (
+    <div onClick={onPress} {...filterProps(props)}>
       {children}
     </div>
   ),

@@ -1,5 +1,5 @@
 import { Exercise } from "@chops/shared";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ExerciseCard } from "../exercise-card";
@@ -72,33 +72,42 @@ describe("ExerciseCard", () => {
     expect(screen.getByText("+1")).toBeInTheDocument();
   });
 
-  test("clicking the card edits it", async () => {
+  test("clicking anywhere on the card edits it", async () => {
     const user = userEvent.setup();
     renderCard();
 
-    await user.click(screen.getByRole("button", { name: /Flam Accent/ }));
+    await user.click(screen.getByText("12 measures · 4/4 → 6/8 · Difficulty 3"));
 
     expect(onEdit).toHaveBeenCalledTimes(1);
   });
 
-  test("Enter and Space edit it too", () => {
+  test("the title is the button that edits it", async () => {
+    const user = userEvent.setup();
     renderCard();
-    const card = screen.getByRole("button", { name: /Flam Accent/ });
 
-    fireEvent.keyDown(card, { key: "Enter" });
-    fireEvent.keyDown(card, { key: " " });
+    await user.click(screen.getByRole("button", { name: "Flam Accent" }));
+
+    expect(onEdit).toHaveBeenCalledTimes(1);
+  });
+
+  test("Enter and Space on the focused title edit it too", async () => {
+    const user = userEvent.setup();
+    renderCard();
+
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Flam Accent" })).toHaveFocus();
+    await user.keyboard("{Enter}");
+    await user.keyboard(" ");
 
     expect(onEdit).toHaveBeenCalledTimes(2);
   });
 
-  test("a key press inside the menu does not edit the card", () => {
+  test("the menu is not nested inside another button", () => {
     renderCard();
 
-    fireEvent.keyDown(screen.getByRole("button", { name: "menu edit" }), {
-      key: "Enter",
-    });
+    const menuButton = screen.getByRole("button", { name: "menu edit" });
 
-    expect(onEdit).not.toHaveBeenCalled();
+    expect(menuButton.parentElement?.closest("button")).toBeNull();
   });
 
   test("deleting from the menu does not also open the editor", async () => {

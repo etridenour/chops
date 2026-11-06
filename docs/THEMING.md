@@ -133,6 +133,15 @@ function MyComponent() {
 }
 ```
 
+### Contrast
+
+`packages/ui/src/themes/__tests__/contrast.test.ts` checks every text color against the surfaces it sits on (resting and hover) for WCAG AA, 4.5:1. It runs in `pnpm test`, so a palette edit that breaks contrast fails CI.
+
+- It only covers themes listed in `CHECKED_THEMES`: `light` and `dark` today. Add a skin or accent theme there once its palette passes.
+- Text on a new surface token needs a new pair in `TEXT_ON_SURFACE`.
+- Pressed states are not checked: the press lasts a moment and nobody reads text during it.
+- Palette slots are shared, so changing one color can move several tokens. Slot 6 is `colorSubtle`, `placeholderColor`, and `borderColorPress` at once.
+
 ---
 
 ## Skins

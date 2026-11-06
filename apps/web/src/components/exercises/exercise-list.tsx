@@ -21,6 +21,7 @@ export function ExerciseList({
 }: ExerciseListProps) {
   return (
     <YStack
+      role={exercises.length > 0 ? "list" : undefined}
       gap="$2"
       opacity={isFetching ? 0.5 : 1}
       pointerEvents={isFetching ? "none" : "auto"}
