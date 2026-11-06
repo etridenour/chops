@@ -49,5 +49,9 @@ pnpm-debug.log*
 
 # Testing
 coverage/
+playwright-report/
+test-results/
+blob-report/
+.playwright/
 AGENTS.md
 *.tsbuildinfo

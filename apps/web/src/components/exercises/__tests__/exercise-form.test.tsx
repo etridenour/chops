@@ -16,10 +16,7 @@ vi.mock("@/lib/api/exercises", () => ({
 const onSuccess = vi.fn();
 const onCancel = vi.fn();
 
-vi.mock(
-  "@chops/ui",
-  async () => (await import("@/test/chops-ui-mock")).mocks,
-);
+vi.mock("@chops/ui", async () => (await import("@/test/chops-ui-mock")).mocks);
 
 const mockExercise = {
   id: "exId",
@@ -140,5 +137,34 @@ describe("ExerciseForm", () => {
       screen.getByRole("heading", { name: "Edit Exercise" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+  });
+
+  test("errors message show on segment editor", async () => {
+    const user = userEvent.setup();
+    render(<ExerciseForm />);
+    await user.type(screen.getByLabelText("Title"), "Some Title");
+    await user.clear(
+      screen.getByRole("textbox", { name: "Segment 1 measure count" }),
+    );
+    await user.clear(
+      screen.getByRole("textbox", { name: "Segment 1 beats per measure" }),
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: "Segment 1 measure count" }),
+      "0",
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: "Segment 1 beats per measure" }),
+      "0",
+    );
+    await user.click(screen.getByText("Create", { selector: "button" }));
+
+    expect(
+      await screen.findByText("At least one measure is required"),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText("At least one beat is required"),
+    ).toBeInTheDocument();
+    expect(mockCreateExercise).not.toHaveBeenCalled();
   });
 });

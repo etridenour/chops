@@ -167,12 +167,14 @@ export function ExerciseLibrary() {
           <ToggleGroupMulti
             options={tags}
             value={searchParams.get("tags")?.split(",") || []}
+            label="Tags"
             onChange={(v) => writeUrl("tags", v.join(","))}
           />
         )}
         <ToggleGroupMulti
           options={[1, 2, 3, 4, 5]}
           value={searchParams.get("difficulty")?.split(",")?.map(Number) || []}
+          label="Difficulty"
           onChange={(v) => writeUrl("difficulty", v.join(","))}
         />
         {hasActiveFilters ? (

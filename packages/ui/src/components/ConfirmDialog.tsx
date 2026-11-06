@@ -50,10 +50,17 @@ export function ConfirmDialog({
           </AlertDialog.Description>
           <XStack gap="$3" justifyContent="flex-end" marginTop="$2">
             <AlertDialog.Cancel asChild>
-              <Button variant="secondary">{cancelLabel || "Cancel"}</Button>
+              <Button variant="secondary" aria-label={cancelLabel || "Cancel"}>
+                {cancelLabel || "Cancel"}
+              </Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
-              <Button onPress={onConfirm}>{confirmLabel || "Confirm"}</Button>
+              <Button
+                onPress={onConfirm}
+                aria-label={confirmLabel || "Confirm"}
+              >
+                {confirmLabel || "Confirm"}
+              </Button>
             </AlertDialog.Action>
           </XStack>
         </AlertDialog.Content>

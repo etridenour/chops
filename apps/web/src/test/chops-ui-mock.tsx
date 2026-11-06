@@ -84,6 +84,7 @@ export const mocks = {
         aria-disabled={isDisabled || undefined}
         aria-busy={loading || undefined}
         aria-label={props["aria-label"]}
+        type={props.type || "button"}
       >
         {children}
       </button>
@@ -100,8 +101,8 @@ export const mocks = {
       {...filterProps(props)}
     />
   ),
-  ToggleGroup: ({ options, value, onChange, allowDeselect }: any) => (
-    <div>
+  ToggleGroup: ({ options, value, onChange, allowDeselect, label }: any) => (
+    <div role="group" aria-label={label}>
       {options.map((opt: any) => (
         <button
           key={opt}
@@ -115,8 +116,8 @@ export const mocks = {
       ))}
     </div>
   ),
-  ToggleGroupMulti: ({ options, value, onChange }: any) => (
-    <div>
+  ToggleGroupMulti: ({ options, value, onChange, label }: any) => (
+    <div role="group" aria-label={label}>
       {options.map((opt: any) => (
         <button
           key={opt}

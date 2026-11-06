@@ -18,6 +18,7 @@ export function Sidebar() {
       backgroundColor="$background"
       padding="$4"
       $md={{ display: "none" }}
+      render="aside"
     >
       <H2 fontSize="$5" marginBottom="$4">
         Chops
@@ -32,15 +33,12 @@ export function Sidebar() {
       <Body color="$colorMuted" fontSize="$2" numberOfLines={1}>
         {user?.email}
       </Body>
-      <Button
-        variant="ghost"
-        size="sm"
-        marginTop="$2"
-        onPress={logout}
-      >
+      <Button variant="ghost" size="sm" marginTop="$2" onPress={logout}>
         <XStack alignItems="center" gap="$2">
           <LogOut size={16} color="$colorMuted" />
-          <Body fontSize="$2" color="$colorMuted">Log Out</Body>
+          <Body fontSize="$2" color="$colorMuted">
+            Log Out
+          </Body>
         </XStack>
       </Button>
     </YStack>

@@ -13,6 +13,7 @@ export interface ButtonProps extends Omit<ViewProps, "children"> {
   fullWidth?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  type?: "button" | "submit" | "reset";
   onPress?: () => void;
 }
 
@@ -30,6 +31,7 @@ export const Button = forwardRef<TamaguiElement, ButtonProps>(function Button(
     fullWidth,
     disabled,
     loading,
+    type = "button",
     onPress,
     ...rest
   },
@@ -63,6 +65,7 @@ export const Button = forwardRef<TamaguiElement, ButtonProps>(function Button(
       // gives it button semantics there. Redundant on web, but harmless, and makes the code more consistent across platforms.
       render="button"
       role="button"
+      {...({ type, disabled: isDisabled || undefined } as ViewProps)}
       aria-disabled={isDisabled ? true : undefined}
       aria-busy={loading ? true : undefined}
       // Loading swaps the label for the drum, taking the accessible name with it. Hold onto the original so the button still announces as itself.
