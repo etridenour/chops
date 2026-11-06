@@ -38,6 +38,6 @@
     "eslint": "^9",
     "prisma": "^6",
     "tsx": "^4",
-    "typescript": "^5"
+    "typescript": "^7"
   }
 }

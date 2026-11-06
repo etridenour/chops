@@ -13,7 +13,7 @@
   "devDependencies": {
     "@chops/eslint-config": "workspace:*",
     "eslint": "^9",
-    "typescript": "^5"
+    "typescript": "^7"
   },
   "dependencies": {
     "zod": "^4.4.3"
