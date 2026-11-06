@@ -9,7 +9,7 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 - `pnpm build` — build all packages and apps
 - `pnpm lint` — ESLint across all packages and apps
 - `pnpm typecheck` — `tsc --noEmit` across all packages and apps
-- `pnpm check` — both of the above; the pre-commit command
+- `pnpm check` — both of the above; runs automatically as a git pre-commit hook (`simple-git-hooks`, installed by `pnpm install`). `git commit --no-verify` skips it
 - Turborepo stops at the first failing package — add `--continue` to see every failure
 - Database (run from `apps/api`): `pnpm db:push`, `pnpm db:migrate`, `pnpm db:generate`, `pnpm db:studio`
 
