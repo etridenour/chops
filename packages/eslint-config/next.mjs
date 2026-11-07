@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { FlatCompat } from "@eslint/eslintrc";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
-import base, { jsxLanguageOptions } from "./base.mjs";
+import base, { jsxLanguageOptions, noHardcodedColors } from "./base.mjs";
 
 const compat = new FlatCompat({
   baseDirectory: dirname(fileURLToPath(import.meta.url)),
@@ -12,6 +12,7 @@ const compat = new FlatCompat({
 export default defineConfig(
   base,
   jsxLanguageOptions,
+  noHardcodedColors,
   compat.extends("next/core-web-vitals"),
   {
     files: ["**/*.{ts,tsx}"],

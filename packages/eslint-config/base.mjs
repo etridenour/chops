@@ -11,6 +11,27 @@ export const jsxLanguageOptions = {
   },
 };
 
+const USE_A_TOKEN =
+  "Use a @chops/ui theme token ($color, $background, ...) instead of a hardcoded color.";
+
+export const noHardcodedColors = {
+  files: ["**/*.tsx"],
+  rules: {
+    "no-restricted-syntax": [
+      "error",
+      {
+        selector:
+          "Literal[value=/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]",
+        message: USE_A_TOKEN,
+      },
+      {
+        selector: "Literal[value=/^(?:rgb|hsl)a?\\(/]",
+        message: USE_A_TOKEN,
+      },
+    ],
+  },
+};
+
 export default defineConfig(
   {
     ignores: [

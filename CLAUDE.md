@@ -64,6 +64,8 @@ Monorepo: `apps/web` (Next.js), `apps/api` (Express), `apps/mobile` (Expo), `pac
 - `next.mjs` re-asserts `tseslint.parser` **after** `next/core-web-vitals` — Next 15 substitutes its own parser, which crashes `@typescript-eslint/no-unused-vars`. Do not remove until Next 16
 - `eslint-plugin-jsx-a11y` only sees real DOM elements, so it is near-blind inside Tamagui components. It earns its keep in `apps/web`, not `packages/ui`
 - Shared packages (`@chops/shared`, `@chops/ui`) must be listed in `transpilePackages` in `apps/web/next.config.ts`
+- Server components can't import the `@chops/ui` barrel (it pulls in client hooks and fails `next build`). Import pure modules directly, e.g. `@chops/ui/src/themes`
+- ESLint errors on hex, `rgb()`, and `hsl()` literals in any `.tsx` file (`noHardcodedColors` in `packages/eslint-config/base.mjs`). Palettes live in `.ts` files, so theme definitions are unaffected
 - `react-native` is aliased to `react-native-web` in `next.config.ts` for Turbopack compatibility
 
 ## Documentation
