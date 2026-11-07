@@ -42,11 +42,13 @@ export default defineConfig({
       },
     },
     {
-      command: `pnpm exec next dev --port ${WEB_PORT}`,
+      command: process.env.CI
+        ? `pnpm exec next build && pnpm exec next start --port ${WEB_PORT}`
+        : `pnpm exec next dev --port ${WEB_PORT}`,
       cwd: "../apps/web",
       url: WEB_URL,
       reuseExistingServer: false,
-      timeout: 120_000,
+      timeout: process.env.CI ? 300_000 : 120_000,
       env: {
         NEXT_PUBLIC_API_URL: API_URL,
       },
