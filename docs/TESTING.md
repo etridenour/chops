@@ -406,6 +406,18 @@ pnpm --filter @chops/e2e e2e:ui       # time-travel runner — the tool to actua
 pnpm --filter @chops/e2e e2e:report   # open the HTML report from the last run
 ```
 
+### In CI
+
+The `e2e` job in `.github/workflows/ci.yml` runs the same steps on every PR, alongside `check`.
+
+- **CI tests a production build** (`next build && next start`), not `next dev`. Dev mode compiles
+  each route on first visit, and on a cold runner that outran the 5s assertion timeout. Run
+  `CI=1 pnpm --filter @chops/e2e e2e` to reproduce CI's mode locally.
+- Failed tests retry twice in CI. A test that only passes on retry shows as **flaky** in the log:
+  treat that as a bug, not a pass.
+- When the job fails, the HTML report is uploaded as the `playwright-report` artifact on the run
+  (kept 7 days). Download it and open `index.html`.
+
 ### What's required on a fresh clone
 
 `pnpm install` is not enough. The Chromium build Playwright drives is a separate ~95MB download
