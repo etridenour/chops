@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "@/app/globals.css";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { NextTamaguiProvider } from "@/components/NextTamaguiProvider";
+import { themes } from "@chops/ui/src/themes";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.variable} style={{ fontFamily: inter.style.fontFamily, backgroundColor: '#050505', color: '#dddddd', minHeight: '100vh', margin: 0 }}>
+      <body className={inter.variable} style={{ fontFamily: inter.style.fontFamily, backgroundColor: themes.dark.background, color: themes.dark.color, minHeight: '100vh', margin: 0 }}>
         <NextTamaguiProvider>
           <AuthProvider>{children}</AuthProvider>
         </NextTamaguiProvider>
